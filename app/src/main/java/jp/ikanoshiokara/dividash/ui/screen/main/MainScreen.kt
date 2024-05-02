@@ -54,7 +54,7 @@ fun MainScreen(
     }
 
     MainContent(
-        goalTime = if (uiState.value.isRun) uiState.value.runningTime else uiState.value.intervalTime,
+        goalTime = uiState.value.goalTime,
         currentTime = uiState.value.currentTime,
         isPlay = uiState.value.isPlay,
         event = viewModel.mainScreenEvent(

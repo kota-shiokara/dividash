@@ -39,7 +39,7 @@ class MainViewModel(
 
     private fun checkCompleteRunning() {
         if (_uiState.value.isNotComplete) return
-        _uiState.update { it.onStop() }
+        _uiState.update { it.onComplete() }
     }
 
     suspend fun onRunning() {
@@ -76,7 +76,8 @@ data class MainUiState(
     val currentTime: Int = 0,
     val isRun: Boolean = false,
     val isInterval: Boolean = false,
-    val prevDivisionType: DivisionType = DivisionType.Interval
+    val prevDivisionType: DivisionType = DivisionType.Interval,
+    val currentDivisionType: DivisionType = DivisionType.Running
 ) {
     val isPlay = isRun || isInterval
     val isComplete = if (prevDivisionType == DivisionType.Running) {
@@ -85,17 +86,22 @@ data class MainUiState(
         currentTime == intervalTime
     }
     val isNotComplete = !isComplete
+    val goalTime = if (currentDivisionType == DivisionType.Running) {
+        runningTime
+    } else {
+        intervalTime
+    }
 
     fun onStart(): MainUiState {
         return if (prevDivisionType == DivisionType.Interval) {
-            this.copy(isRun = true, prevDivisionType = DivisionType.Running)
+            this.copy(isRun = true, currentDivisionType = DivisionType.Running)
         } else {
-            this.copy(isInterval = true, prevDivisionType = DivisionType.Interval)
+            this.copy(isInterval = true, currentDivisionType = DivisionType.Interval)
         }
     }
 
     fun onAutoStart(): MainUiState {
-        val nextDivisionType = if (prevDivisionType == DivisionType.Interval) {
+        val nextDivisionType = if (currentDivisionType == DivisionType.Interval) {
             DivisionType.Running
         } else {
             DivisionType.Interval
@@ -104,7 +110,8 @@ data class MainUiState(
             isRun = nextDivisionType == DivisionType.Running,
             isInterval = nextDivisionType == DivisionType.Interval,
             currentTime = 0,
-            prevDivisionType = nextDivisionType
+            prevDivisionType = currentDivisionType,
+            currentDivisionType = nextDivisionType
         )
     }
 
@@ -112,8 +119,27 @@ data class MainUiState(
         return this.copy(isRun = false, isInterval = false)
     }
 
+    fun onComplete(): MainUiState {
+        return this.copy(
+            isRun = false,
+            isInterval = false,
+            currentTime = 0,
+            prevDivisionType = currentDivisionType,
+            currentDivisionType = if (currentDivisionType == DivisionType.Interval) {
+                DivisionType.Running
+            } else {
+                DivisionType.Interval
+            }
+        )
+    }
+
     fun onStop(): MainUiState {
-        return this.copy(isRun = false, isInterval = false, currentTime = 0)
+        return this.copy(
+            isRun = false,
+            isInterval = false,
+            currentTime = 0,
+            currentDivisionType = DivisionType.Running
+        )
     }
 
     sealed interface DivisionType {
