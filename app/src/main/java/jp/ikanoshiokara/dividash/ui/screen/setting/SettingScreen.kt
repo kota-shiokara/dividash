@@ -1,5 +1,6 @@
 package jp.ikanoshiokara.dividash.ui.screen.setting
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -56,6 +57,7 @@ fun SettingScreen(
     SettingContent(
         runningTime = uiState.runningTime,
         intervalTime = uiState.intervalTime,
+        isAutoStart = uiState.isAutoStart,
         event = SettingScreenEvent(
             onRunningTimeIncreaseMinutes = { viewModel.increaseRunningTime() },
             onRunningTimeDecreaseMinutes = { viewModel.decreaseRunningTime() },
@@ -63,7 +65,10 @@ fun SettingScreen(
             onIntervalTimeIncreaseMinutes = { viewModel.increaseIntervalTime() },
             onIntervalTimeDecreaseMinutes = { viewModel.decreaseIntervalTime() },
             onIntervalTimeValueChange = { value -> viewModel.changeIntervalTime(value) },
-            onChangeAutoStart = { value -> viewModel.changeAutoStart(value) },
+            onChangeAutoStart = { value ->
+                Log.d("SettingScreen", "onChangeAutoStart: $value")
+                viewModel.changeAutoStart(value)
+            },
             navigateBack = {
                 navController.popBackStack()
             }
@@ -203,7 +208,8 @@ fun CheckBoxRow(
             onCheckedChange = onCheckedChange,
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.onPrimary,
-                uncheckedColor = MaterialTheme.colorScheme.onPrimary
+                uncheckedColor = MaterialTheme.colorScheme.onPrimary,
+                checkmarkColor = MaterialTheme.colorScheme.primary
             )
         )
         content()
