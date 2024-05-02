@@ -6,42 +6,61 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import com.kiwi.navigationcompose.typed.Destination
+import com.kiwi.navigationcompose.typed.composable
+import com.kiwi.navigationcompose.typed.createRoutePattern
 import jp.ikanoshiokara.dividash.ui.screen.main.MainScreen
 import jp.ikanoshiokara.dividash.ui.screen.setting.SettingScreen
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalSerializationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             DividashTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                val navController = rememberNavController()
+                CompositionLocalProvider(
+                    LocalNavController provides navController
                 ) {
-                    MainScreen()
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = createRoutePattern<Destinations.Main>()
+                        ) {
+                            composable<Destinations.Main> {
+                                MainScreen()
+                            }
+                            composable<Destinations.Setting> {
+                                SettingScreen()
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+val LocalNavController = staticCompositionLocalOf<NavController> {
+    error("No NavGraph provided")
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DividashTheme {
-        Greeting("Android")
-    }
+sealed interface Destinations: Destination {
+    @Serializable
+    data object Main : Destinations
+
+    @Serializable
+    data object Setting : Destinations
 }

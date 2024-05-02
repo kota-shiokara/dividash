@@ -31,6 +31,20 @@ class SettingViewModel(
             settingRepository.saveRunningTime(newRunningTime)
         }
     }
+
+    fun increaseRunningTime() = changeRunningTime(uiState.value.runningTime + 60)
+
+    fun decreaseRunningTime() = changeRunningTime(uiState.value.runningTime - 60)
+
+    fun changeIntervalTime(newIntervalTime: Int) {
+        viewModelScope.launch {
+            settingRepository.saveIntervalTime(newIntervalTime)
+        }
+    }
+
+    fun increaseIntervalTime() = changeIntervalTime(uiState.value.intervalTime + 60)
+
+    fun decreaseIntervalTime() = changeIntervalTime(uiState.value.intervalTime - 60)
 }
 
 data class SettingUiState(

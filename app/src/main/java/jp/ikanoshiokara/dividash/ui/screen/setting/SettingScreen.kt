@@ -14,23 +14,33 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import jp.ikanoshiokara.dividash.LocalNavController
+import jp.ikanoshiokara.dividash.R
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -39,25 +49,50 @@ fun SettingScreen(
     viewModel: SettingViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val navController = LocalNavController.current
 
     SettingContent(
         runningTime = uiState.runningTime,
         intervalTime = uiState.intervalTime,
         event = SettingScreenEvent(
-            onRunningTimeIncreaseMinutes = { viewModel.changeRunningTime(uiState.runningTime + 1) },
-            onRunningTimeDecreaseMinutes = { viewModel.changeRunningTime(uiState.runningTime - 1) },
-            onRunningTimeValueChange = { value -> viewModel.changeRunningTime(value) }
+            onRunningTimeIncreaseMinutes = { viewModel.increaseRunningTime() },
+            onRunningTimeDecreaseMinutes = { viewModel.decreaseRunningTime() },
+            onRunningTimeValueChange = { value -> viewModel.changeRunningTime(value) },
+            onIntervalTimeIncreaseMinutes = { viewModel.increaseIntervalTime() },
+            onIntervalTimeDecreaseMinutes = { viewModel.decreaseIntervalTime() },
+            onIntervalTimeValueChange = { value -> viewModel.changeIntervalTime(value) },
+            navigateBack = {
+                navController.popBackStack()
+            }
         )
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingContent(
     runningTime: Int = 25,
     intervalTime: Int = 5,
     event: SettingScreenEvent = SettingScreenEvent()
 ) {
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.setting_screen_title)) },
+                navigationIcon = {
+                    IconButton(onClick = event.navigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.primary
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -74,7 +109,10 @@ fun SettingContent(
             )
             Spacer(modifier = Modifier.height(16.dp))
             TimeEditRow(
-                time = intervalTime
+                time = intervalTime,
+                onIncreaseMinutes = event.onIntervalTimeIncreaseMinutes,
+                onDecreaseMinutes = event.onIntervalTimeDecreaseMinutes,
+                onValueChange = { value -> event.onIntervalTimeValueChange(value) }
             )
         }
     }
@@ -100,9 +138,9 @@ fun TimeEditRow(
         }
         Spacer(modifier = Modifier.width(16.dp))
         OutlinedTextField(
-            value = if (time != 0) "$time" else "",
+            value = if (time != 0) "${time / 60}" else "",
             onValueChange = { value ->
-                val newValue = (value.toIntOrNull() ?: 0)
+                val newValue = (value.toIntOrNull() ?: 0) * 60
                 onValueChange(newValue)
             },
             placeholder = {
@@ -113,7 +151,13 @@ fun TimeEditRow(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedTextColor = MaterialTheme.colorScheme.onPrimary
+            )
         )
         Spacer(modifier = Modifier.width(16.dp))
         OutlinedIconButton(onClick = onIncreaseMinutes) {
@@ -125,7 +169,11 @@ fun TimeEditRow(
 data class SettingScreenEvent(
     val onRunningTimeIncreaseMinutes: () -> Unit = {},
     val onRunningTimeDecreaseMinutes: () -> Unit = {},
-    val onRunningTimeValueChange: (Int) -> Unit = {}
+    val onRunningTimeValueChange: (Int) -> Unit = {},
+    val onIntervalTimeIncreaseMinutes: () -> Unit = {},
+    val onIntervalTimeDecreaseMinutes: () -> Unit = {},
+    val onIntervalTimeValueChange: (Int) -> Unit = {},
+    val navigateBack: () -> Unit = {}
 )
 
 @Preview

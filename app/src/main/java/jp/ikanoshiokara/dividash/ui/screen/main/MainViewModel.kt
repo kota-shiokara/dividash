@@ -5,44 +5,66 @@ import androidx.lifecycle.viewModelScope
 import jp.ikanoshiokara.dividash.data.SettingRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val settingRepository: SettingRepository
 ): ViewModel() {
-    val uiState: StateFlow<MainUiState> = combine(
-        settingRepository.runningTime,
-        settingRepository.intervalTime
-    ) { runningTime, intervalTime ->
-        MainUiState(
-            runningTime = runningTime,
-            intervalTime = intervalTime
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1000),
-        initialValue = MainUiState()
-    )
+    private val _uiState: MutableStateFlow<MainUiState> = MutableStateFlow(MainUiState())
+    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-    private val _uiEvents: MutableStateFlow<List<MainUiEvent>> = MutableStateFlow(emptyList())
-    val uiEvents: StateFlow<List<MainUiEvent>> = _uiEvents.asStateFlow()
-
-    // TODO: 今後ViewModelにロジックを移行する
-    suspend fun onChangeTime() {
-
+    init {
+        getSettings()
     }
 
-
-    fun consumeEvent(event: MainUiEvent) {
-        _uiEvents.update { e ->
-            e.filterNot { it == event }
+    private fun getSettings() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(loading = true) }
+            try {
+                settingRepository.userSettingTimes.collect {
+                    _uiState.value = MainUiState(
+                        loading = false,
+                        runningTime = it.runningTime,
+                        intervalTime = it.intervalTime
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e) }
+            }
         }
+    }
+
+    private fun checkCompleteRunning() {
+        if (_uiState.value.isNotComplete) return
+        _uiState.update { it.onStop() }
+    }
+
+    suspend fun onRunning() {
+        while (_uiState.value.isPlay) {
+            delay(1000)
+            _uiState.update { it.copy(currentTime = it.currentTime + 1) }
+            checkCompleteRunning()
+        }
+    }
+
+    fun mainScreenEvent(
+        onNavigateSetting: () -> Unit
+    ): MainScreenEvent {
+        return MainScreenEvent(
+            onNavigateSetting = onNavigateSetting,
+            onClickStartButton = {
+                _uiState.update { it.onStart() }
+            },
+            onClickPauseButton = {
+                _uiState.update { it.onPause() }
+            },
+            onClickStopButton = {
+                _uiState.update { it.onStop() }
+            }
+        )
     }
 }
 
@@ -53,11 +75,49 @@ data class MainUiState(
     val intervalTime: Int = -1,
     val currentTime: Int = 0,
     val isRun: Boolean = false,
-    val isInterval: Boolean = false
+    val isInterval: Boolean = false,
+    val prevDivisionType: DivisionType = DivisionType.Interval
 ) {
     val isPlay = isRun || isInterval
-}
+    val isComplete = if (prevDivisionType == DivisionType.Running) {
+        currentTime == runningTime
+    } else {
+        currentTime == intervalTime
+    }
+    val isNotComplete = !isComplete
 
-sealed interface MainUiEvent {
-    data class OnChangeTime(val changeTime: Int): MainUiEvent
+    fun onStart(): MainUiState {
+        return if (prevDivisionType == DivisionType.Interval) {
+            this.copy(isRun = true, prevDivisionType = DivisionType.Running)
+        } else {
+            this.copy(isInterval = true, prevDivisionType = DivisionType.Interval)
+        }
+    }
+
+    fun onAutoStart(): MainUiState {
+        val nextDivisionType = if (prevDivisionType == DivisionType.Interval) {
+            DivisionType.Running
+        } else {
+            DivisionType.Interval
+        }
+        return this.copy(
+            isRun = nextDivisionType == DivisionType.Running,
+            isInterval = nextDivisionType == DivisionType.Interval,
+            currentTime = 0,
+            prevDivisionType = nextDivisionType
+        )
+    }
+
+    fun onPause(): MainUiState {
+        return this.copy(isRun = false, isInterval = false)
+    }
+
+    fun onStop(): MainUiState {
+        return this.copy(isRun = false, isInterval = false, currentTime = 0)
+    }
+
+    sealed interface DivisionType {
+        data object Running: DivisionType
+        data object Interval: DivisionType
+    }
 }
