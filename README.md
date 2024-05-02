@@ -1,4 +1,4 @@
 # dividash
 Its android application that very very simple pomodoro timer
 
-![dividash](./image/main_screen.png)
+<img src="./image/main_screen.png" width="300" />
