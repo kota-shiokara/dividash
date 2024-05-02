@@ -9,16 +9,24 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 interface SettingRepository {
+    companion object {
+        val DEFAULT_USER_SETTINGS = UserSettings()
+    }
+
     val runningTime: Flow<Int>
     val intervalTime: Flow<Int>
-    val userSettingTimes: Flow<UserSettingTimes>
+    val isAutoStart: Flow<Boolean>
+    val userSettings: Flow<UserSettings>
+
     suspend fun saveRunningTime(runningTime: Int)
     suspend fun saveIntervalTime(intervalTime: Int)
+    suspend fun saveAutoStart(isAutoStart: Boolean)
 }
 
-data class UserSettingTimes(
-    val runningTime: Int,
-    val intervalTime: Int
+data class UserSettings(
+    val runningTime: Int = -1,
+    val intervalTime: Int = -1,
+    val isAutoStart: Boolean = false
 )
 
 class SettingRepositoryImpl(
@@ -33,12 +41,19 @@ class SettingRepositoryImpl(
         .catch { Log.e("${it.cause}", "${it.stackTrace}") }
         .map { preferences -> preferences[INTERVAL_TIME] ?: (5 * 60) }
 
-    override val userSettingTimes = dataStore.data
+    override val isAutoStart = dataStore.data
         .catch { Log.e("${it.cause}", "${it.stackTrace}") }
         .map { preferences ->
-            UserSettingTimes(
+            preferences[IS_AUTO_START] ?: false
+        }
+
+    override val userSettings = dataStore.data
+        .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+        .map { preferences ->
+            UserSettings(
                 runningTime = preferences[RUNNING_TIME] ?: (25 * 60),
-                intervalTime = preferences[INTERVAL_TIME] ?: (5 * 60)
+                intervalTime = preferences[INTERVAL_TIME] ?: (5 * 60),
+                isAutoStart = preferences[IS_AUTO_START] ?: false
             )
         }
 
@@ -51,6 +66,12 @@ class SettingRepositoryImpl(
     override suspend fun saveIntervalTime(intervalTime: Int) {
         dataStore.edit {
             it[INTERVAL_TIME] = intervalTime
+        }
+    }
+
+    override suspend fun saveAutoStart(isAutoStart: Boolean) {
+        dataStore.edit {
+            it[IS_AUTO_START] = isAutoStart
         }
     }
 }

@@ -24,11 +24,12 @@ class MainViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(loading = true) }
             try {
-                settingRepository.userSettingTimes.collect {
+                settingRepository.userSettings.collect {
                     _uiState.value = MainUiState(
                         loading = false,
                         runningTime = it.runningTime,
-                        intervalTime = it.intervalTime
+                        intervalTime = it.intervalTime,
+                        isAutoStart = it.isAutoStart
                     )
                 }
             } catch (e: Exception) {
@@ -39,7 +40,13 @@ class MainViewModel(
 
     private fun checkCompleteRunning() {
         if (_uiState.value.isNotComplete) return
-        _uiState.update { it.onComplete() }
+        _uiState.update {
+            if (_uiState.value.isAutoStart) {
+                it.onAutoStart()
+            } else {
+                it.onComplete()
+            }
+        }
     }
 
     suspend fun onRunning() {
@@ -76,21 +83,19 @@ data class MainUiState(
     val currentTime: Int = 0,
     val isRun: Boolean = false,
     val isInterval: Boolean = false,
+    val isAutoStart: Boolean = false,
     val prevDivisionType: DivisionType = DivisionType.Interval,
     val currentDivisionType: DivisionType = DivisionType.Running
 ) {
     val isPlay = isRun || isInterval
-    val isComplete = if (prevDivisionType == DivisionType.Running) {
-        currentTime == runningTime
-    } else {
-        currentTime == intervalTime
-    }
-    val isNotComplete = !isComplete
     val goalTime = if (currentDivisionType == DivisionType.Running) {
         runningTime
     } else {
         intervalTime
     }
+
+    val isComplete = currentTime == goalTime
+    val isNotComplete = !isComplete
 
     fun onStart(): MainUiState {
         return if (prevDivisionType == DivisionType.Interval) {
