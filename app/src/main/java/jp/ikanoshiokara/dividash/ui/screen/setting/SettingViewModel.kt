@@ -3,6 +3,7 @@ package jp.ikanoshiokara.dividash.ui.screen.setting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jp.ikanoshiokara.dividash.data.SettingRepository
+import jp.ikanoshiokara.dividash.util.rangeFilter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -10,6 +11,11 @@ import kotlinx.coroutines.launch
 class SettingViewModel(
     private val settingRepository: SettingRepository,
 ) : ViewModel() {
+    companion object {
+        private const val MIN_MINUTES = 1 * 60
+        private const val MAX_MINUTES = 999 * 60
+    }
+
     val uiState =
         settingRepository.userSettings.stateIn(
             viewModelScope,
@@ -19,7 +25,7 @@ class SettingViewModel(
 
     fun changeRunningTime(newRunningTime: Int) {
         viewModelScope.launch {
-            settingRepository.saveRunningTime(newRunningTime)
+            settingRepository.saveRunningTime(newRunningTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
         }
     }
 
@@ -29,7 +35,7 @@ class SettingViewModel(
 
     fun changeIntervalTime(newIntervalTime: Int) {
         viewModelScope.launch {
-            settingRepository.saveIntervalTime(newIntervalTime)
+            settingRepository.saveIntervalTime(newIntervalTime.rangeFilter(MIN_MINUTES , MAX_MINUTES))
         }
     }
 

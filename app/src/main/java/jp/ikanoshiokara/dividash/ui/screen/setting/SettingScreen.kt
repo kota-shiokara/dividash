@@ -78,8 +78,8 @@ fun SettingScreen(viewModel: SettingViewModel = koinViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingContent(
-    runningTime: Int = 25,
-    intervalTime: Int = 5,
+    runningTime: Int = 25 * 60,
+    intervalTime: Int = 5 * 60,
     isAutoStart: Boolean = false,
     event: SettingScreenEvent = SettingScreenEvent(),
 ) {
@@ -161,15 +161,10 @@ fun TimeEditRow(
         }
         Spacer(modifier = Modifier.width(16.dp))
         OutlinedTextField(
-            value = if (time != 0) "${time / 60}" else "",
+            value = "${time / 60}",
             onValueChange = { value ->
-                val newValue = (value.toIntOrNull() ?: 0) * 60
+                val newValue = (value.toIntOrNull() ?: 1) * 60
                 onValueChange(newValue)
-            },
-            placeholder = {
-                if (time == 0) {
-                    Text(text = "0")
-                }
             },
             modifier = Modifier.width(64.dp),
             keyboardOptions =
