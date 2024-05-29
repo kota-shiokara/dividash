@@ -35,7 +35,7 @@ class SettingViewModel(
 
     fun changeIntervalTime(newIntervalTime: Int) {
         viewModelScope.launch {
-            settingRepository.saveIntervalTime(newIntervalTime.rangeFilter(MIN_MINUTES , MAX_MINUTES))
+            settingRepository.saveIntervalTime(newIntervalTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
         }
     }
 
