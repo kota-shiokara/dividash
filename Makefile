@@ -5,3 +5,6 @@ kotlin_lint:
 
 android_lint:
 	./gradlew lint
+
+format:
+    ./gradlew formatKotlin
