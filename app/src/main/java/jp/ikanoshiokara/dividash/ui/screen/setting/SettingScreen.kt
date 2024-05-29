@@ -48,9 +48,7 @@ import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingScreen(
-    viewModel: SettingViewModel = koinViewModel()
-) {
+fun SettingScreen(viewModel: SettingViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navController = LocalNavController.current
 
@@ -58,21 +56,22 @@ fun SettingScreen(
         runningTime = uiState.runningTime,
         intervalTime = uiState.intervalTime,
         isAutoStart = uiState.isAutoStart,
-        event = SettingScreenEvent(
-            onRunningTimeIncreaseMinutes = { viewModel.increaseRunningTime() },
-            onRunningTimeDecreaseMinutes = { viewModel.decreaseRunningTime() },
-            onRunningTimeValueChange = { value -> viewModel.changeRunningTime(value) },
-            onIntervalTimeIncreaseMinutes = { viewModel.increaseIntervalTime() },
-            onIntervalTimeDecreaseMinutes = { viewModel.decreaseIntervalTime() },
-            onIntervalTimeValueChange = { value -> viewModel.changeIntervalTime(value) },
-            onChangeAutoStart = { value ->
-                Log.d("SettingScreen", "onChangeAutoStart: $value")
-                viewModel.changeAutoStart(value)
-            },
-            navigateBack = {
-                navController.popBackStack()
-            }
-        )
+        event =
+            SettingScreenEvent(
+                onRunningTimeIncreaseMinutes = { viewModel.increaseRunningTime() },
+                onRunningTimeDecreaseMinutes = { viewModel.decreaseRunningTime() },
+                onRunningTimeValueChange = { value -> viewModel.changeRunningTime(value) },
+                onIntervalTimeIncreaseMinutes = { viewModel.increaseIntervalTime() },
+                onIntervalTimeDecreaseMinutes = { viewModel.decreaseIntervalTime() },
+                onIntervalTimeValueChange = { value -> viewModel.changeIntervalTime(value) },
+                onChangeAutoStart = { value ->
+                    Log.d("SettingScreen", "onChangeAutoStart: $value")
+                    viewModel.changeAutoStart(value)
+                },
+                navigateBack = {
+                    navController.popBackStack()
+                },
+            ),
     )
 }
 
@@ -82,7 +81,7 @@ fun SettingContent(
     runningTime: Int = 25 * 60,
     intervalTime: Int = 5 * 60,
     isAutoStart: Boolean = false,
-    event: SettingScreenEvent = SettingScreenEvent()
+    event: SettingScreenEvent = SettingScreenEvent(),
 ) {
     Scaffold(
         topBar = {
@@ -93,21 +92,23 @@ fun SettingContent(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                colors =
+                    TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
             )
         },
-        containerColor = MaterialTheme.colorScheme.primary
+        containerColor = MaterialTheme.colorScheme.primary,
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(32.dp))
             Text(stringResource(R.string.setting_running_time_label))
@@ -116,7 +117,7 @@ fun SettingContent(
                 time = runningTime,
                 onIncreaseMinutes = event.onRunningTimeIncreaseMinutes,
                 onDecreaseMinutes = event.onRunningTimeDecreaseMinutes,
-                onValueChange = { value -> event.onRunningTimeValueChange(value) }
+                onValueChange = { value -> event.onRunningTimeValueChange(value) },
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -126,13 +127,13 @@ fun SettingContent(
                 time = intervalTime,
                 onIncreaseMinutes = event.onIntervalTimeIncreaseMinutes,
                 onDecreaseMinutes = event.onIntervalTimeDecreaseMinutes,
-                onValueChange = { value -> event.onIntervalTimeValueChange(value) }
+                onValueChange = { value -> event.onIntervalTimeValueChange(value) },
             )
 
             Spacer(modifier = Modifier.height(32.dp))
             CheckBoxRow(
                 checked = isAutoStart,
-                onCheckedChange = event.onChangeAutoStart
+                onCheckedChange = event.onChangeAutoStart,
             ) {
                 Text(stringResource(R.string.setting_auto_start_label))
             }
@@ -146,14 +147,14 @@ fun TimeEditRow(
     time: Int,
     onIncreaseMinutes: () -> Unit = {},
     onDecreaseMinutes: () -> Unit = {},
-    onValueChange: (Int) -> Unit = {}
+    onValueChange: (Int) -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
 
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         OutlinedIconButton(onClick = onDecreaseMinutes) {
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null)
@@ -166,20 +167,22 @@ fun TimeEditRow(
                 onValueChange(newValue)
             },
             modifier = Modifier.width(64.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
-                cursorColor = MaterialTheme.colorScheme.onPrimary
-            )
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+                    cursorColor = MaterialTheme.colorScheme.onPrimary,
+                ),
         )
         Spacer(modifier = Modifier.width(16.dp))
         OutlinedIconButton(onClick = onIncreaseMinutes) {
@@ -193,21 +196,22 @@ fun CheckBoxRow(
     modifier: Modifier = Modifier,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    content: @Composable () -> Unit = {}
+    content: @Composable () -> Unit = {},
 ) {
     Row(
         modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         Checkbox(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            colors = CheckboxDefaults.colors(
-                checkedColor = MaterialTheme.colorScheme.onPrimary,
-                uncheckedColor = MaterialTheme.colorScheme.onPrimary,
-                checkmarkColor = MaterialTheme.colorScheme.primary
-            )
+            colors =
+                CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.onPrimary,
+                    uncheckedColor = MaterialTheme.colorScheme.onPrimary,
+                    checkmarkColor = MaterialTheme.colorScheme.primary,
+                ),
         )
         content()
     }
@@ -221,7 +225,7 @@ data class SettingScreenEvent(
     val onIntervalTimeDecreaseMinutes: () -> Unit = {},
     val onIntervalTimeValueChange: (Int) -> Unit = {},
     val onChangeAutoStart: (Boolean) -> Unit = {},
-    val navigateBack: () -> Unit = {}
+    val navigateBack: () -> Unit = {},
 )
 
 @Preview

@@ -9,18 +9,19 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingViewModel(
-    private val settingRepository: SettingRepository
-): ViewModel() {
+    private val settingRepository: SettingRepository,
+) : ViewModel() {
     companion object {
         private const val MIN_MINUTES = 1 * 60
         private const val MAX_MINUTES = 999 * 60
     }
 
-    val uiState = settingRepository.userSettings.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        SettingRepository.DEFAULT_USER_SETTINGS
-    )
+    val uiState =
+        settingRepository.userSettings.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            SettingRepository.DEFAULT_USER_SETTINGS,
+        )
 
     fun changeRunningTime(newRunningTime: Int) {
         viewModelScope.launch {
@@ -34,7 +35,7 @@ class SettingViewModel(
 
     fun changeIntervalTime(newIntervalTime: Int) {
         viewModelScope.launch {
-            settingRepository.saveIntervalTime(newIntervalTime.rangeFilter(MIN_MINUTES , MAX_MINUTES))
+            settingRepository.saveIntervalTime(newIntervalTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
         }
     }
 

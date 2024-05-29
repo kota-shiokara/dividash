@@ -19,43 +19,48 @@ interface SettingRepository {
     val userSettings: Flow<UserSettings>
 
     suspend fun saveRunningTime(runningTime: Int)
+
     suspend fun saveIntervalTime(intervalTime: Int)
+
     suspend fun saveAutoStart(isAutoStart: Boolean)
 }
 
 data class UserSettings(
     val runningTime: Int = -1,
     val intervalTime: Int = -1,
-    val isAutoStart: Boolean = false
+    val isAutoStart: Boolean = false,
 )
 
 class SettingRepositoryImpl(
-    private val dataStore: DataStore<Preferences>
-): SettingRepository {
+    private val dataStore: DataStore<Preferences>,
+) : SettingRepository {
+    override val runningTime =
+        dataStore.data
+            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .map { preferences -> preferences[RUNNING_TIME] ?: (25 * 60) }
 
-    override val runningTime = dataStore.data
-        .catch { Log.e("${it.cause}", "${it.stackTrace}") }
-        .map { preferences -> preferences[RUNNING_TIME] ?: (25 * 60) }
+    override val intervalTime =
+        dataStore.data
+            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .map { preferences -> preferences[INTERVAL_TIME] ?: (5 * 60) }
 
-    override val intervalTime = dataStore.data
-        .catch { Log.e("${it.cause}", "${it.stackTrace}") }
-        .map { preferences -> preferences[INTERVAL_TIME] ?: (5 * 60) }
+    override val isAutoStart =
+        dataStore.data
+            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .map { preferences ->
+                preferences[IS_AUTO_START] ?: false
+            }
 
-    override val isAutoStart = dataStore.data
-        .catch { Log.e("${it.cause}", "${it.stackTrace}") }
-        .map { preferences ->
-            preferences[IS_AUTO_START] ?: false
-        }
-
-    override val userSettings = dataStore.data
-        .catch { Log.e("${it.cause}", "${it.stackTrace}") }
-        .map { preferences ->
-            UserSettings(
-                runningTime = preferences[RUNNING_TIME] ?: (25 * 60),
-                intervalTime = preferences[INTERVAL_TIME] ?: (5 * 60),
-                isAutoStart = preferences[IS_AUTO_START] ?: false
-            )
-        }
+    override val userSettings =
+        dataStore.data
+            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .map { preferences ->
+                UserSettings(
+                    runningTime = preferences[RUNNING_TIME] ?: (25 * 60),
+                    intervalTime = preferences[INTERVAL_TIME] ?: (5 * 60),
+                    isAutoStart = preferences[IS_AUTO_START] ?: false,
+                )
+            }
 
     override suspend fun saveRunningTime(runningTime: Int) {
         dataStore.edit {

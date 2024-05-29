@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val settingRepository: SettingRepository
-): ViewModel() {
+    private val settingRepository: SettingRepository,
+) : ViewModel() {
     private val _uiState: MutableStateFlow<MainUiState> = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
@@ -25,12 +25,13 @@ class MainViewModel(
             _uiState.update { it.copy(loading = true) }
             try {
                 settingRepository.userSettings.collect {
-                    _uiState.value = MainUiState(
-                        loading = false,
-                        runningTime = it.runningTime,
-                        intervalTime = it.intervalTime,
-                        isAutoStart = it.isAutoStart
-                    )
+                    _uiState.value =
+                        MainUiState(
+                            loading = false,
+                            runningTime = it.runningTime,
+                            intervalTime = it.intervalTime,
+                            isAutoStart = it.isAutoStart,
+                        )
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e) }
@@ -57,9 +58,7 @@ class MainViewModel(
         }
     }
 
-    fun mainScreenEvent(
-        onNavigateSetting: () -> Unit
-    ): MainScreenEvent {
+    fun mainScreenEvent(onNavigateSetting: () -> Unit): MainScreenEvent {
         return MainScreenEvent(
             onNavigateSetting = onNavigateSetting,
             onClickStartButton = {
@@ -70,7 +69,7 @@ class MainViewModel(
             },
             onClickStopButton = {
                 _uiState.update { it.onStop() }
-            }
+            },
         )
     }
 }
@@ -85,14 +84,15 @@ data class MainUiState(
     val isInterval: Boolean = false,
     val isAutoStart: Boolean = false,
     val prevDivisionType: DivisionType = DivisionType.Interval,
-    val currentDivisionType: DivisionType = DivisionType.Running
+    val currentDivisionType: DivisionType = DivisionType.Running,
 ) {
     val isPlay = isRun || isInterval
-    val goalTime = if (currentDivisionType == DivisionType.Running) {
-        runningTime
-    } else {
-        intervalTime
-    }
+    val goalTime =
+        if (currentDivisionType == DivisionType.Running) {
+            runningTime
+        } else {
+            intervalTime
+        }
 
     val isComplete = currentTime == goalTime
     val isNotComplete = !isComplete
@@ -106,17 +106,18 @@ data class MainUiState(
     }
 
     fun onAutoStart(): MainUiState {
-        val nextDivisionType = if (currentDivisionType == DivisionType.Interval) {
-            DivisionType.Running
-        } else {
-            DivisionType.Interval
-        }
+        val nextDivisionType =
+            if (currentDivisionType == DivisionType.Interval) {
+                DivisionType.Running
+            } else {
+                DivisionType.Interval
+            }
         return this.copy(
             isRun = nextDivisionType == DivisionType.Running,
             isInterval = nextDivisionType == DivisionType.Interval,
             currentTime = 0,
             prevDivisionType = currentDivisionType,
-            currentDivisionType = nextDivisionType
+            currentDivisionType = nextDivisionType,
         )
     }
 
@@ -130,11 +131,12 @@ data class MainUiState(
             isInterval = false,
             currentTime = 0,
             prevDivisionType = currentDivisionType,
-            currentDivisionType = if (currentDivisionType == DivisionType.Interval) {
-                DivisionType.Running
-            } else {
-                DivisionType.Interval
-            }
+            currentDivisionType =
+                if (currentDivisionType == DivisionType.Interval) {
+                    DivisionType.Running
+                } else {
+                    DivisionType.Interval
+                },
         )
     }
 
@@ -143,12 +145,13 @@ data class MainUiState(
             isRun = false,
             isInterval = false,
             currentTime = 0,
-            currentDivisionType = DivisionType.Running
+            currentDivisionType = DivisionType.Running,
         )
     }
 
     sealed interface DivisionType {
-        data object Running: DivisionType
-        data object Interval: DivisionType
+        data object Running : DivisionType
+
+        data object Interval : DivisionType
     }
 }

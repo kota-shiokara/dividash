@@ -30,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,9 +45,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalSerializationApi::class)
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel = koinViewModel()
-) {
+fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     val navController = LocalNavController.current
     val uiState = viewModel.uiState.collectAsState()
 
@@ -60,11 +57,12 @@ fun MainScreen(
         goalTime = uiState.value.goalTime,
         currentTime = uiState.value.currentTime,
         isPlay = uiState.value.isPlay,
-        event = viewModel.mainScreenEvent(
-            onNavigateSetting = {
-                navController.navigate(Destinations.Setting)
-            }
-        )
+        event =
+            viewModel.mainScreenEvent(
+                onNavigateSetting = {
+                    navController.navigate(Destinations.Setting)
+                },
+            ),
     )
 }
 
@@ -74,53 +72,58 @@ fun MainContent(
     goalTime: Int = 0,
     currentTime: Int = 0,
     isPlay: Boolean = false,
-    event: MainScreenEvent = MainScreenEvent()
+    event: MainScreenEvent = MainScreenEvent(),
 ) {
     Scaffold(
-        modifier = modifier
-            .fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.primary
+        modifier =
+            modifier
+                .fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.primary,
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(Color.Transparent),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(Color.Transparent),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.End
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                horizontalArrangement = Arrangement.End,
             ) {
                 IconButton(
                     onClick = event.onNavigateSetting,
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = Color.White
-                    )
+                    colors =
+                        IconButtonDefaults.iconButtonColors(
+                            contentColor = Color.White,
+                        ),
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = null)
                 }
             }
             Box(
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(
                     progress = { (1.0f * currentTime) / goalTime },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .padding(16.dp),
                     color = Color.White,
                     strokeWidth = 32.dp,
                     trackColor = Color.White.copy(alpha = 0.4f),
-                    strokeCap = StrokeCap.Round
+                    strokeCap = StrokeCap.Round,
                 )
                 Text(
                     text = (goalTime - currentTime).formatTimer(),
                     color = Color.White,
-                    fontSize = 56.sp
+                    fontSize = 56.sp,
                 )
             }
             Row {
@@ -129,28 +132,30 @@ fun MainContent(
                 OutlinedIconButton(
                     onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
                     modifier = Modifier.size(size),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = Color.White
-                    )
+                    colors =
+                        IconButtonDefaults.iconButtonColors(
+                            contentColor = Color.White,
+                        ),
                 ) {
                     Icon(
                         if (isPlay) Icons.Default.Pause else Icons.Default.PlayArrow,
                         contentDescription = null,
-                        modifier = Modifier.size(size)
+                        modifier = Modifier.size(size),
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 OutlinedIconButton(
                     onClick = event.onClickStopButton,
                     modifier = Modifier.size(size),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = Color.White
-                    )
+                    colors =
+                        IconButtonDefaults.iconButtonColors(
+                            contentColor = Color.White,
+                        ),
                 ) {
                     Icon(
                         Icons.Default.Stop,
                         contentDescription = null,
-                        modifier = Modifier.size(size)
+                        modifier = Modifier.size(size),
                     )
                 }
             }
@@ -162,7 +167,7 @@ data class MainScreenEvent(
     val onNavigateSetting: () -> Unit = {},
     val onClickStartButton: () -> Unit = {},
     val onClickPauseButton: () -> Unit = {},
-    val onClickStopButton: () -> Unit = {}
+    val onClickStopButton: () -> Unit = {},
 )
 
 @Preview
@@ -180,7 +185,7 @@ fun MainScreenIsPlayPreview() {
         MainContent(
             goalTime = 25 * 60,
             currentTime = 2 * 60,
-            isPlay = true
+            isPlay = true,
         )
     }
 }
