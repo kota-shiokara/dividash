@@ -7,4 +7,4 @@ android_lint:
 	./gradlew lint
 
 format:
-    ./gradlew formatKotlin
+	./gradlew formatKotlin
