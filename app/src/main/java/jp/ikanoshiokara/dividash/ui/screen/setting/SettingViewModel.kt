@@ -8,13 +8,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingViewModel(
-    private val settingRepository: SettingRepository
-): ViewModel() {
-    val uiState = settingRepository.userSettings.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        SettingRepository.DEFAULT_USER_SETTINGS
-    )
+    private val settingRepository: SettingRepository,
+) : ViewModel() {
+    val uiState =
+        settingRepository.userSettings.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            SettingRepository.DEFAULT_USER_SETTINGS,
+        )
 
     fun changeRunningTime(newRunningTime: Int) {
         viewModelScope.launch {

@@ -3,7 +3,10 @@ package jp.ikanoshiokara.dividash.util
 import kotlin.math.max
 import kotlin.math.min
 
-fun Int.rangeFilter(from: Int, to: Int): Int {
+fun Int.rangeFilter(
+    from: Int,
+    to: Int,
+): Int {
     val min = min(from, to)
     val max = max(from, to)
     if (this in (min..max)) return this

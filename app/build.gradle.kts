@@ -1,7 +1,11 @@
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKotlinSerialization)
+    alias(libs.plugins.kotlinter)
 }
 
 android {
@@ -80,4 +84,23 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+}
+
+kotlinter {
+    ignoreFailures = false
+    reporters = arrayOf("html", "plain")
+}
+
+tasks.forEach { task ->
+    task.run {
+        when (this) {
+            is LintTask -> {
+                setSource(source - fileTree("${layout.buildDirectory}/generated"))
+            }
+
+            is FormatTask -> {
+                setSource(source - fileTree("${layout.buildDirectory}/generated"))
+            }
+        }
+    }
 }

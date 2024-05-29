@@ -29,15 +29,15 @@ class MainActivity : ComponentActivity() {
             DividashTheme {
                 val navController = rememberNavController()
                 CompositionLocalProvider(
-                    LocalNavController provides navController
+                    LocalNavController provides navController,
                 ) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
+                        color = MaterialTheme.colorScheme.background,
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = createRoutePattern<Destinations.Main>()
+                            startDestination = createRoutePattern<Destinations.Main>(),
                         ) {
                             composable<Destinations.Main> {
                                 MainScreen()
@@ -53,11 +53,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-val LocalNavController = staticCompositionLocalOf<NavController> {
-    error("No NavGraph provided")
-}
+val LocalNavController =
+    staticCompositionLocalOf<NavController> {
+        error("No NavGraph provided")
+    }
 
-sealed interface Destinations: Destination {
+sealed interface Destinations : Destination {
     @Serializable
     data object Main : Destinations
 

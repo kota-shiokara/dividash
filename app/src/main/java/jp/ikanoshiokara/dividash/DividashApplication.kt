@@ -6,8 +6,7 @@ import jp.ikanoshiokara.dividash.ui.screen.viewModelModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-class DividashApplication: Application() {
-
+class DividashApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         setupKoin()
@@ -18,7 +17,7 @@ class DividashApplication: Application() {
             androidContext(this@DividashApplication)
             modules(
                 settingModules,
-                viewModelModules
+                viewModelModules,
             )
         }
     }
