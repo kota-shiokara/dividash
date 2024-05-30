@@ -16,7 +16,7 @@ import com.kiwi.navigationcompose.typed.Destination
 import com.kiwi.navigationcompose.typed.composable
 import com.kiwi.navigationcompose.typed.createRoutePattern
 import jp.ikanoshiokara.dividash.ui.screen.main.MainScreen
-import jp.ikanoshiokara.dividash.ui.screen.setting.SettingScreen
+import jp.ikanoshiokara.dividash.ui.screen.settings.SettingsScreen
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -42,8 +42,8 @@ class MainActivity : ComponentActivity() {
                             composable<Destinations.Main> {
                                 MainScreen()
                             }
-                            composable<Destinations.Setting> {
-                                SettingScreen()
+                            composable<Destinations.Settings> {
+                                SettingsScreen()
                             }
                         }
                     }
@@ -63,5 +63,5 @@ sealed interface Destinations : Destination {
     data object Main : Destinations
 
     @Serializable
-    data object Setting : Destinations
+    data object Settings : Destinations
 }

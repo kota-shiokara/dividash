@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-interface SettingRepository {
+interface SettingsRepository {
     companion object {
         val DEFAULT_USER_SETTINGS = UserSettings()
     }
@@ -31,9 +31,9 @@ data class UserSettings(
     val isAutoStart: Boolean = false,
 )
 
-class SettingRepositoryImpl(
+class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
-) : SettingRepository {
+) : SettingsRepository {
     override val runningTime =
         dataStore.data
             .catch { Log.e("${it.cause}", "${it.stackTrace}") }
