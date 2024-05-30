@@ -2,7 +2,7 @@ package jp.ikanoshiokara.dividash.ui.screen.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import jp.ikanoshiokara.dividash.data.SettingRepository
+import jp.ikanoshiokara.dividash.data.SettingsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val settingRepository: SettingRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<MainUiState> = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
@@ -24,7 +24,7 @@ class MainViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(loading = true) }
             try {
-                settingRepository.userSettings.collect {
+                settingsRepository.userSettings.collect {
                     _uiState.value =
                         MainUiState(
                             loading = false,

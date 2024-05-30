@@ -5,5 +5,5 @@ import org.koin.dsl.module
 
 val settingModules =
     module {
-        single<SettingRepository> { SettingRepositoryImpl(androidContext().settingDataStore) }
+        single<SettingsRepository> { SettingsRepositoryImpl(androidContext().settingDataStore) }
     }

@@ -60,7 +60,7 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         event =
             viewModel.mainScreenEvent(
                 onNavigateSetting = {
-                    navController.navigate(Destinations.Setting)
+                    navController.navigate(Destinations.Settings)
                 },
             ),
     )

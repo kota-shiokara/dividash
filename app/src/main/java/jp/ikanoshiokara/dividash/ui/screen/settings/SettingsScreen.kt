@@ -1,4 +1,4 @@
-package jp.ikanoshiokara.dividash.ui.screen.setting
+package jp.ikanoshiokara.dividash.ui.screen.settings
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -41,16 +41,16 @@ import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingScreen(viewModel: SettingViewModel = koinViewModel()) {
+fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navController = LocalNavController.current
 
-    SettingContent(
+    SettingsContent(
         runningTime = uiState.runningTime,
         intervalTime = uiState.intervalTime,
         isAutoStart = uiState.isAutoStart,
         event =
-            SettingScreenEvent(
+            SettingsScreenEvent(
                 onRunningTimeIncreaseMinutes = { viewModel.increaseRunningTime() },
                 onRunningTimeDecreaseMinutes = { viewModel.decreaseRunningTime() },
                 onIntervalTimeIncreaseMinutes = { viewModel.increaseIntervalTime() },
@@ -68,16 +68,16 @@ fun SettingScreen(viewModel: SettingViewModel = koinViewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingContent(
+fun SettingsContent(
     runningTime: Int = 25 * 60,
     intervalTime: Int = 5 * 60,
     isAutoStart: Boolean = false,
-    event: SettingScreenEvent = SettingScreenEvent(),
+    event: SettingsScreenEvent = SettingsScreenEvent(),
 ) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.setting_screen_title)) },
+                title = { Text(stringResource(R.string.settings_screen_title)) },
                 navigationIcon = {
                     IconButton(onClick = event.navigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -104,7 +104,7 @@ fun SettingContent(
             Spacer(modifier = Modifier.height(16.dp))
             TimeEditRow(
                 label = {
-                    Text(stringResource(R.string.setting_running_time_label))
+                    Text(stringResource(R.string.settings_running_time_label))
                 },
                 time = runningTime,
                 onIncreaseMinutes = event.onRunningTimeIncreaseMinutes,
@@ -114,7 +114,7 @@ fun SettingContent(
             Spacer(modifier = Modifier.height(16.dp))
             TimeEditRow(
                 label = {
-                    Text(stringResource(R.string.setting_interval_time_label))
+                    Text(stringResource(R.string.settings_interval_time_label))
                 },
                 time = intervalTime,
                 onIncreaseMinutes = event.onIntervalTimeIncreaseMinutes,
@@ -126,7 +126,7 @@ fun SettingContent(
                 checked = isAutoStart,
                 onCheckedChange = event.onChangeAutoStart,
                 label = {
-                    Text(stringResource(R.string.setting_auto_start_label))
+                    Text(stringResource(R.string.settings_auto_start_label))
                 },
             )
         }
@@ -208,7 +208,7 @@ fun SettingItemRow(
     }
 }
 
-data class SettingScreenEvent(
+data class SettingsScreenEvent(
     val onRunningTimeIncreaseMinutes: () -> Unit = {},
     val onRunningTimeDecreaseMinutes: () -> Unit = {},
     val onIntervalTimeIncreaseMinutes: () -> Unit = {},
@@ -219,16 +219,16 @@ data class SettingScreenEvent(
 
 @Preview
 @Composable
-fun SettingContentPreview() {
+fun SettingsContentPreview() {
     DividashTheme {
-        SettingContent()
+        SettingsContent()
     }
 }
 
 @Preview(locale = "ja")
 @Composable
-fun SettingContentJapanesePreview() {
+fun SettingsContentJapanesePreview() {
     DividashTheme {
-        SettingContent()
+        SettingsContent()
     }
 }

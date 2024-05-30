@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">dividash</string>
 
-    <string name="setting_screen_title">Settings</string>
-    <string name="setting_running_time_label">Running(Minutes)</string>
-    <string name="setting_interval_time_label">Interval(Minutes)</string>
-    <string name="setting_auto_start_label">Activate Auto Start</string>
+    <string name="settings_screen_title">Settings</string>
+    <string name="settings_running_time_label">Running(Minutes)</string>
+    <string name="settings_interval_time_label">Interval(Minutes)</string>
+    <string name="settings_auto_start_label">Activate Auto Start</string>
 </resources>

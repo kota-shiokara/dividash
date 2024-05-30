@@ -1,15 +1,15 @@
-package jp.ikanoshiokara.dividash.ui.screen.setting
+package jp.ikanoshiokara.dividash.ui.screen.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import jp.ikanoshiokara.dividash.data.SettingRepository
+import jp.ikanoshiokara.dividash.data.SettingsRepository
 import jp.ikanoshiokara.dividash.util.rangeFilter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SettingViewModel(
-    private val settingRepository: SettingRepository,
+class SettingsViewModel(
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     companion object {
         private const val MIN_MINUTES = 1 * 60
@@ -17,15 +17,15 @@ class SettingViewModel(
     }
 
     val uiState =
-        settingRepository.userSettings.stateIn(
+        settingsRepository.userSettings.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
-            SettingRepository.DEFAULT_USER_SETTINGS,
+            SettingsRepository.DEFAULT_USER_SETTINGS,
         )
 
     fun changeRunningTime(newRunningTime: Int) {
         viewModelScope.launch {
-            settingRepository.saveRunningTime(newRunningTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
+            settingsRepository.saveRunningTime(newRunningTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
         }
     }
 
@@ -35,7 +35,7 @@ class SettingViewModel(
 
     fun changeIntervalTime(newIntervalTime: Int) {
         viewModelScope.launch {
-            settingRepository.saveIntervalTime(newIntervalTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
+            settingsRepository.saveIntervalTime(newIntervalTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
         }
     }
 
@@ -45,7 +45,7 @@ class SettingViewModel(
 
     fun changeAutoStart(isAutoStart: Boolean) {
         viewModelScope.launch {
-            settingRepository.saveAutoStart(isAutoStart)
+            settingsRepository.saveAutoStart(isAutoStart)
         }
     }
 }
