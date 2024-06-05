@@ -1,6 +1,5 @@
 package jp.ikanoshiokara.dividash.ui.screen.main
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,9 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -33,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiwi.navigationcompose.typed.navigate
@@ -80,13 +80,10 @@ fun MainContent(
                 .fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.primary,
     ) { innerPadding ->
-        Column(
-            modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(Color.Transparent),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
         ) {
             Row(
                 modifier =
@@ -105,58 +102,68 @@ fun MainContent(
                     Icon(Icons.Default.Settings, contentDescription = null)
                 }
             }
-            Box(
-                contentAlignment = Alignment.Center,
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CircularProgressIndicator(
-                    progress = { (1.0f * currentTime) / goalTime },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .padding(16.dp),
-                    color = Color.White,
-                    strokeWidth = 32.dp,
-                    trackColor = Color.White.copy(alpha = 0.4f),
-                    strokeCap = StrokeCap.Round,
-                )
-                Text(
-                    text = (goalTime - currentTime).formatTimer(),
-                    color = Color.White,
-                    fontSize = 56.sp,
-                )
-            }
-            Row {
-                val size = 80.dp
-
-                OutlinedIconButton(
-                    onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
-                    modifier = Modifier.size(size),
-                    colors =
-                        IconButtonDefaults.iconButtonColors(
-                            contentColor = Color.White,
-                        ),
+                Box(
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
-                        if (isPlay) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        modifier = Modifier.size(size),
+                    CircularProgressIndicator(
+                        progress = { (1.0f * currentTime) / goalTime },
+                        modifier =
+                            Modifier
+                                .aspectRatio(1f)
+                                .padding(16.dp),
+                        color = Color.White,
+                        strokeWidth = 32.dp,
+                        trackColor = Color.White.copy(alpha = 0.4f),
+                        strokeCap = StrokeCap.Round,
+                    )
+                    Text(
+                        text = (goalTime - currentTime).formatTimer(),
+                        color = Color.White,
+                        fontSize = 56.sp,
                     )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedIconButton(
-                    onClick = event.onClickStopButton,
-                    modifier = Modifier.size(size),
-                    colors =
-                        IconButtonDefaults.iconButtonColors(
-                            contentColor = Color.White,
-                        ),
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Icon(
-                        Icons.Default.Stop,
-                        contentDescription = null,
+                    val size = 80.dp
+
+                    OutlinedIconButton(
+                        onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
                         modifier = Modifier.size(size),
-                    )
+                        colors =
+                            IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                containerColor = Color.White,
+                            ),
+                    ) {
+                        Icon(
+                            if (isPlay) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            modifier = Modifier.size(size),
+                        )
+                    }
+                    OutlinedIconButton(
+                        onClick = event.onClickStopButton,
+                        modifier = Modifier.size(size),
+                        colors =
+                            IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                containerColor = Color.White,
+                            ),
+                    ) {
+                        Icon(
+                            Icons.Default.Stop,
+                            contentDescription = null,
+                            modifier = Modifier.size(size),
+                        )
+                    }
                 }
             }
         }
@@ -170,6 +177,7 @@ data class MainScreenEvent(
     val onClickStopButton: () -> Unit = {},
 )
 
+@PreviewScreenSizes
 @Preview
 @Composable
 fun MainScreenDefaultPreview() {
