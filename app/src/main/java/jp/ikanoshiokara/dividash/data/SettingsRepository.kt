@@ -36,12 +36,12 @@ data class UserSettings(
     val runningTime: Int = -1,
     val intervalTime: Int = -1,
     val isAutoStart: Boolean = false,
-    val ringtoneUri: String = ""
+    val ringtoneUri: String = "",
 )
 
 data class RingtoneInfo(
     val title: String,
-    val uri: String
+    val uri: String,
 )
 
 class SettingsRepositoryImpl(
@@ -79,7 +79,7 @@ class SettingsRepositoryImpl(
                     runningTime = preferences[RUNNING_TIME] ?: (25 * 60),
                     intervalTime = preferences[INTERVAL_TIME] ?: (5 * 60),
                     isAutoStart = preferences[IS_AUTO_START] ?: false,
-                    ringtoneUri = preferences[RINGTONE_URI] ?: ""
+                    ringtoneUri = preferences[RINGTONE_URI] ?: "",
                 )
             }
 
@@ -122,8 +122,8 @@ class SettingsRepositoryImpl(
             ringtoneList.add(
                 RingtoneInfo(
                     title = title,
-                    uri = uri
-                )
+                    uri = uri,
+                ),
             )
         }
 

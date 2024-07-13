@@ -35,7 +35,7 @@ class MainViewModel(
                             runningTime = it.runningTime,
                             intervalTime = it.intervalTime,
                             isAutoStart = it.isAutoStart,
-                            ringtoneUri = it.ringtoneUri
+                            ringtoneUri = it.ringtoneUri,
                         )
                 }
             } catch (e: Exception) {
@@ -56,11 +56,12 @@ class MainViewModel(
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
                 }
 
-            val player = MediaPlayer().apply {
-                setDataSource(context, ringtoneUri)
-                isLooping = false
-                prepare()
-            }
+            val player =
+                MediaPlayer().apply {
+                    setDataSource(context, ringtoneUri)
+                    isLooping = false
+                    prepare()
+                }
             player.start()
             delay(5000)
             player.stop()

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -123,10 +122,10 @@ fun SettingsContent(
     ) { innerPadding ->
         Column(
             modifier =
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -159,46 +158,16 @@ fun SettingsContent(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            SettingItemRow(
-                label = { Text("Ringtone Type") },
-                content = {
-                    Log.i("RingtoneInfo", "$ringtoneList")
-                    val expanded = remember { mutableStateOf(false) }
-                    Box(
-                        contentAlignment = Alignment.CenterStart,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(4.dp))
-                            .clickable { expanded.value = !expanded.value },
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceAround
-                        ) {
-                            Text(
-                                text = ringtoneList.find { it.uri == ringtoneUri }?.title ?: "Not Found",
-                                modifier = Modifier.padding(start = 10.dp)
-                            )
-                            Icon(Icons.Filled.ArrowDropDown, null,)
-                        }
-                        DropdownMenu(
-                            expanded = expanded.value,
-                            onDismissRequest = { expanded.value = false }
-                        ) {
-                            ringtoneList.forEach { item ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(text = item.title)
-                                    },
-                                    onClick = {
-                                        event.onChangeRingtoneUri(item.uri)
-                                        expanded.value = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
+            DropDownRow(
+                label = {
+                    Text(stringResource(id = R.string.settings_ringtone_label))
+                },
+                labelList = ringtoneList.map { it.title },
+                value = ringtoneUri,
+                list = ringtoneList.map { it.uri },
+                onClickItem = { index ->
+                    event.onChangeRingtoneUri(ringtoneList[index].uri)
+                },
             )
         }
     }
@@ -261,6 +230,66 @@ fun CheckBoxRow(
 }
 
 @Composable
+fun <T> DropDownRow(
+    modifier: Modifier = Modifier,
+    label: @Composable () -> Unit = {},
+    labelList: List<String> = emptyList(),
+    value: T,
+    list: List<T> = emptyList(),
+    onClickItem: (index: Int) -> Unit = {},
+) {
+    SettingItemRow(
+        modifier = modifier,
+        label = {
+            label()
+        },
+        content = {
+            val expanded = remember { mutableStateOf(false) }
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(4.dp))
+                        .clickable { expanded.value = !expanded.value },
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                ) {
+                    val index = list.indexOf(value)
+                    Text(
+                        text =
+                            if (index in labelList.indices) {
+                                labelList[index]
+                            } else {
+                                stringResource(id = R.string.settings_drop_down_not_found)
+                            },
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    Icon(Icons.Filled.ArrowDropDown, null)
+                }
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false },
+                ) {
+                    labelList.forEachIndexed { index, item ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = item)
+                            },
+                            onClick = {
+                                onClickItem(index)
+                                expanded.value = false
+                            },
+                        )
+                    }
+                }
+            }
+        },
+    )
+}
+
+@Composable
 fun SettingItemRow(
     modifier: Modifier = Modifier,
     label: @Composable () -> Unit,
@@ -289,17 +318,18 @@ data class SettingsScreenEvent(
     val navigateBack: () -> Unit = {},
 )
 
-val previewRingtoneList = listOf(
-    RingtoneInfo("title", "audio1"),
-    RingtoneInfo("title2", "audio2")
-)
+val previewRingtoneList =
+    listOf(
+        RingtoneInfo("title", "audio1"),
+        RingtoneInfo("title2", "audio2"),
+    )
 
 @Preview
 @Composable
 fun SettingsContentPreview() {
     DividashTheme {
         SettingsContent(
-            ringtoneList = previewRingtoneList
+            ringtoneList = previewRingtoneList,
         )
     }
 }
@@ -309,7 +339,7 @@ fun SettingsContentPreview() {
 fun SettingsContentJapanesePreview() {
     DividashTheme {
         SettingsContent(
-            ringtoneList = previewRingtoneList
+            ringtoneList = previewRingtoneList,
         )
     }
 }

@@ -2,22 +2,17 @@ package jp.ikanoshiokara.dividash.ui.screen.settings
 
 import android.content.Context
 import android.media.MediaPlayer
-import android.media.RingtoneManager
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jp.ikanoshiokara.dividash.data.RingtoneInfo
 import jp.ikanoshiokara.dividash.data.SettingsRepository
 import jp.ikanoshiokara.dividash.data.UserSettings
-import jp.ikanoshiokara.dividash.ui.screen.main.MainUiState
 import jp.ikanoshiokara.dividash.util.rangeFilter
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -41,7 +36,7 @@ class SettingsViewModel(
                     _uiState.value =
                         SettingUiState.fromUserSettings(it).copy(
                             loading = false,
-                            ringtoneList = ringtoneList
+                            ringtoneList = ringtoneList,
                         )
                 }
             } catch (e: Exception) {
@@ -76,15 +71,19 @@ class SettingsViewModel(
         }
     }
 
-    fun changeRingtoneUri(newRingtoneUri: String, context: Context) {
+    fun changeRingtoneUri(
+        newRingtoneUri: String,
+        context: Context,
+    ) {
         viewModelScope.launch {
             val uri = newRingtoneUri.toUri()
 
-            val player = MediaPlayer().apply {
-                setDataSource(context, uri)
-                isLooping = false
-                prepare()
-            }
+            val player =
+                MediaPlayer().apply {
+                    setDataSource(context, uri)
+                    isLooping = false
+                    prepare()
+                }
             player.start()
             delay(5000)
             player.stop()
@@ -110,7 +109,7 @@ data class SettingUiState(
                 runningTime = settings.runningTime,
                 intervalTime = settings.intervalTime,
                 isAutoStart = settings.isAutoStart,
-                ringtoneUri = settings.ringtoneUri
+                ringtoneUri = settings.ringtoneUri,
             )
         }
     }
