@@ -1,7 +1,11 @@
 package jp.ikanoshiokara.dividash.ui.screen.settings
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,14 +15,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,16 +35,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import jp.ikanoshiokara.dividash.LocalNavController
 import jp.ikanoshiokara.dividash.R
+import jp.ikanoshiokara.dividash.data.RingtoneInfo
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -44,11 +59,18 @@ import org.koin.androidx.compose.koinViewModel
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navController = LocalNavController.current
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.init(context)
+    }
 
     SettingsContent(
         runningTime = uiState.runningTime,
         intervalTime = uiState.intervalTime,
         isAutoStart = uiState.isAutoStart,
+        ringtoneUri = uiState.ringtoneUri,
+        ringtoneList = uiState.ringtoneList,
         event =
             SettingsScreenEvent(
                 onRunningTimeIncreaseMinutes = { viewModel.increaseRunningTime() },
@@ -58,6 +80,9 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 onChangeAutoStart = { value ->
                     Log.d("SettingScreen", "onChangeAutoStart: $value")
                     viewModel.changeAutoStart(value)
+                },
+                onChangeRingtoneUri = { ringtoneUri ->
+                    viewModel.changeRingtoneUri(ringtoneUri, context)
                 },
                 navigateBack = {
                     navController.popBackStack()
@@ -72,6 +97,8 @@ fun SettingsContent(
     runningTime: Int = 25 * 60,
     intervalTime: Int = 5 * 60,
     isAutoStart: Boolean = false,
+    ringtoneUri: String = "",
+    ringtoneList: List<RingtoneInfo> = emptyList(),
     event: SettingsScreenEvent = SettingsScreenEvent(),
 ) {
     Scaffold(
@@ -127,6 +154,19 @@ fun SettingsContent(
                 onCheckedChange = event.onChangeAutoStart,
                 label = {
                     Text(stringResource(R.string.settings_auto_start_label))
+                },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            DropDownRow(
+                label = {
+                    Text(stringResource(id = R.string.settings_ringtone_label))
+                },
+                labelList = ringtoneList.map { it.title },
+                value = ringtoneUri,
+                list = ringtoneList.map { it.uri },
+                onClickItem = { index ->
+                    event.onChangeRingtoneUri(ringtoneList[index].uri)
                 },
             )
         }
@@ -190,6 +230,66 @@ fun CheckBoxRow(
 }
 
 @Composable
+fun <T> DropDownRow(
+    modifier: Modifier = Modifier,
+    label: @Composable () -> Unit = {},
+    labelList: List<String> = emptyList(),
+    value: T,
+    list: List<T> = emptyList(),
+    onClickItem: (index: Int) -> Unit = {},
+) {
+    SettingItemRow(
+        modifier = modifier,
+        label = {
+            label()
+        },
+        content = {
+            val expanded = remember { mutableStateOf(false) }
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(4.dp))
+                        .clickable { expanded.value = !expanded.value },
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                ) {
+                    val index = list.indexOf(value)
+                    Text(
+                        text =
+                            if (index in labelList.indices) {
+                                labelList[index]
+                            } else {
+                                stringResource(id = R.string.settings_drop_down_not_found)
+                            },
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    Icon(Icons.Filled.ArrowDropDown, null)
+                }
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false },
+                ) {
+                    labelList.forEachIndexed { index, item ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = item)
+                            },
+                            onClick = {
+                                onClickItem(index)
+                                expanded.value = false
+                            },
+                        )
+                    }
+                }
+            }
+        },
+    )
+}
+
+@Composable
 fun SettingItemRow(
     modifier: Modifier = Modifier,
     label: @Composable () -> Unit,
@@ -214,14 +314,23 @@ data class SettingsScreenEvent(
     val onIntervalTimeIncreaseMinutes: () -> Unit = {},
     val onIntervalTimeDecreaseMinutes: () -> Unit = {},
     val onChangeAutoStart: (Boolean) -> Unit = {},
+    val onChangeRingtoneUri: (String) -> Unit = {},
     val navigateBack: () -> Unit = {},
 )
+
+val previewRingtoneList =
+    listOf(
+        RingtoneInfo("title", "audio1"),
+        RingtoneInfo("title2", "audio2"),
+    )
 
 @Preview
 @Composable
 fun SettingsContentPreview() {
     DividashTheme {
-        SettingsContent()
+        SettingsContent(
+            ringtoneList = previewRingtoneList,
+        )
     }
 }
 
@@ -229,6 +338,8 @@ fun SettingsContentPreview() {
 @Composable
 fun SettingsContentJapanesePreview() {
     DividashTheme {
-        SettingsContent()
+        SettingsContent(
+            ringtoneList = previewRingtoneList,
+        )
     }
 }

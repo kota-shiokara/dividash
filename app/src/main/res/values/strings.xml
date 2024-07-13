@@ -5,4 +5,6 @@
     <string name="settings_running_time_label">Running(Minutes)</string>
     <string name="settings_interval_time_label">Interval(Minutes)</string>
     <string name="settings_auto_start_label">Activate Auto Start</string>
+    <string name="settings_ringtone_label">Ringtone</string>
+    <string name="settings_drop_down_not_found">Not Found</string>
 </resources>

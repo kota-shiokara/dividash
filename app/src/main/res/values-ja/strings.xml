@@ -6,4 +6,6 @@
     <string name="settings_running_time_label">作業時間(分)</string>
     <string name="settings_interval_time_label">休憩時間(分)</string>
     <string name="settings_auto_start_label">自動スタートを有効にする</string>
+    <string name="settings_ringtone_label">着信音</string>
+    <string name="settings_drop_down_not_found">指定されていません</string>
 </resources>

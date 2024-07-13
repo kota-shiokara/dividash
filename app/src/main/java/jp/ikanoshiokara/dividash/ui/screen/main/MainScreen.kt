@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -46,11 +47,12 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalSerializationApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
+    val context = LocalContext.current
     val navController = LocalNavController.current
     val uiState = viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState.value.isPlay) {
-        viewModel.onRunning()
+        viewModel.onRunning(context)
     }
 
     MainContent(
