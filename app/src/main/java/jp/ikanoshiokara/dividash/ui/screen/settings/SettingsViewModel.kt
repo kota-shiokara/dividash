@@ -1,7 +1,9 @@
 package jp.ikanoshiokara.dividash.ui.screen.settings
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.media.RingtoneManager
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jp.ikanoshiokara.dividash.data.RingtoneInfo
@@ -9,6 +11,8 @@ import jp.ikanoshiokara.dividash.data.SettingsRepository
 import jp.ikanoshiokara.dividash.data.UserSettings
 import jp.ikanoshiokara.dividash.ui.screen.main.MainUiState
 import jp.ikanoshiokara.dividash.util.rangeFilter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -46,7 +50,7 @@ class SettingsViewModel(
         }
     }
 
-    fun changeRunningTime(newRunningTime: Int) {
+    private fun changeRunningTime(newRunningTime: Int) {
         viewModelScope.launch {
             settingsRepository.saveRunningTime(newRunningTime.rangeFilter(MIN_MINUTES, MAX_MINUTES))
         }
@@ -72,9 +76,21 @@ class SettingsViewModel(
         }
     }
 
-    fun changeRingtoneType(newRingtoneType: Int) {
+    fun changeRingtoneUri(newRingtoneUri: String, context: Context) {
         viewModelScope.launch {
-            settingsRepository.saveRingtoneType(newRingtoneType)
+            val uri = newRingtoneUri.toUri()
+
+            val player = MediaPlayer().apply {
+                setDataSource(context, uri)
+                isLooping = false
+                prepare()
+            }
+            player.start()
+            delay(5000)
+            player.stop()
+        }
+        viewModelScope.launch {
+            settingsRepository.saveRingtoneUri(newRingtoneUri)
         }
     }
 }
@@ -85,7 +101,7 @@ data class SettingUiState(
     val runningTime: Int = -1,
     val intervalTime: Int = -1,
     val isAutoStart: Boolean = false,
-    val ringtoneType: Int = -1,
+    val ringtoneUri: String = "",
     val ringtoneList: List<RingtoneInfo> = emptyList(),
 ) {
     companion object {
@@ -94,7 +110,7 @@ data class SettingUiState(
                 runningTime = settings.runningTime,
                 intervalTime = settings.intervalTime,
                 isAutoStart = settings.isAutoStart,
-                ringtoneType = settings.ringtoneType
+                ringtoneUri = settings.ringtoneUri
             )
         }
     }

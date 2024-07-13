@@ -1,7 +1,9 @@
 package jp.ikanoshiokara.dividash.ui.screen.main
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.media.RingtoneManager
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jp.ikanoshiokara.dividash.data.SettingsRepository
@@ -33,7 +35,7 @@ class MainViewModel(
                             runningTime = it.runningTime,
                             intervalTime = it.intervalTime,
                             isAutoStart = it.isAutoStart,
-                            ringtoneType = it.ringtoneType
+                            ringtoneUri = it.ringtoneUri
                         )
                 }
             } catch (e: Exception) {
@@ -47,17 +49,21 @@ class MainViewModel(
 
         // 音を鳴らします
         viewModelScope.launch {
-            val ringtoneType =
-                if (_uiState.value.ringtoneType != -1) {
-                    _uiState.value.ringtoneType
+            val ringtoneUri =
+                if (_uiState.value.ringtoneUri.isNotBlank()) {
+                    _uiState.value.ringtoneUri.toUri()
                 } else {
-                    RingtoneManager.TYPE_RINGTONE
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
                 }
-            val uri = RingtoneManager.getDefaultUri(ringtoneType)
-            val ringtone = RingtoneManager.getRingtone(context, uri)
-            ringtone.play()
-            delay(1000)
-            ringtone.stop()
+
+            val player = MediaPlayer().apply {
+                setDataSource(context, ringtoneUri)
+                isLooping = false
+                prepare()
+            }
+            player.start()
+            delay(5000)
+            player.stop()
         }
 
         _uiState.update {
@@ -99,7 +105,7 @@ data class MainUiState(
     val runningTime: Int = -1,
     val intervalTime: Int = -1,
     val currentTime: Int = 0,
-    val ringtoneType: Int = -1,
+    val ringtoneUri: String = "",
     val isRun: Boolean = false,
     val isInterval: Boolean = false,
     val isAutoStart: Boolean = false,

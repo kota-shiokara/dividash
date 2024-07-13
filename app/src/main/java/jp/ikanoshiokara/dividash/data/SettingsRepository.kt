@@ -18,7 +18,7 @@ interface SettingsRepository {
     val runningTime: Flow<Int>
     val intervalTime: Flow<Int>
     val isAutoStart: Flow<Boolean>
-    val ringtoneType: Flow<Int>
+    val ringtoneUri: Flow<String>
     val userSettings: Flow<UserSettings>
 
     suspend fun saveRunningTime(runningTime: Int)
@@ -27,7 +27,7 @@ interface SettingsRepository {
 
     suspend fun saveAutoStart(isAutoStart: Boolean)
 
-    suspend fun saveRingtoneType(ringtoneType: Int)
+    suspend fun saveRingtoneUri(ringtoneUri: String)
 
     fun getRingtoneList(context: Context): List<RingtoneInfo>
 }
@@ -36,12 +36,12 @@ data class UserSettings(
     val runningTime: Int = -1,
     val intervalTime: Int = -1,
     val isAutoStart: Boolean = false,
-    val ringtoneType: Int = -1
+    val ringtoneUri: String = ""
 )
 
 data class RingtoneInfo(
     val title: String,
-    val index: Int
+    val uri: String
 )
 
 class SettingsRepositoryImpl(
@@ -64,11 +64,11 @@ class SettingsRepositoryImpl(
                 preferences[IS_AUTO_START] ?: false
             }
 
-    override val ringtoneType =
+    override val ringtoneUri =
         dataStore.data
             .catch { Log.e("${it.cause}", "${it.stackTrace}") }
             .map { preferences ->
-                preferences[RINGTONE_TYPE] ?: -1
+                preferences[RINGTONE_URI] ?: ""
             }
 
     override val userSettings =
@@ -79,7 +79,7 @@ class SettingsRepositoryImpl(
                     runningTime = preferences[RUNNING_TIME] ?: (25 * 60),
                     intervalTime = preferences[INTERVAL_TIME] ?: (5 * 60),
                     isAutoStart = preferences[IS_AUTO_START] ?: false,
-                    ringtoneType = preferences[RINGTONE_TYPE] ?: -1
+                    ringtoneUri = preferences[RINGTONE_URI] ?: ""
                 )
             }
 
@@ -101,9 +101,9 @@ class SettingsRepositoryImpl(
         }
     }
 
-    override suspend fun saveRingtoneType(ringtoneType: Int) {
+    override suspend fun saveRingtoneUri(ringtoneUri: String) {
         dataStore.edit {
-            it[RINGTONE_TYPE] = ringtoneType
+            it[RINGTONE_URI] = ringtoneUri
         }
     }
 
@@ -114,13 +114,15 @@ class SettingsRepositoryImpl(
         manager.setType(RingtoneManager.TYPE_ALL)
         val cursor = manager.cursor
         while (cursor.moveToNext()) {
-            val index = cursor.getInt(RingtoneManager.ID_COLUMN_INDEX)
             val title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
+            val type = cursor.getInt(RingtoneManager.ID_COLUMN_INDEX)
+            val uriPrefix = cursor.getString(RingtoneManager.URI_COLUMN_INDEX)
+            val uri = "$uriPrefix/$type"
 
             ringtoneList.add(
                 RingtoneInfo(
                     title = title,
-                    index = index
+                    uri = uri
                 )
             )
         }

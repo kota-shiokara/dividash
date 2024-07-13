@@ -70,7 +70,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
         runningTime = uiState.runningTime,
         intervalTime = uiState.intervalTime,
         isAutoStart = uiState.isAutoStart,
-        ringtoneType = uiState.ringtoneType,
+        ringtoneUri = uiState.ringtoneUri,
         ringtoneList = uiState.ringtoneList,
         event =
             SettingsScreenEvent(
@@ -82,8 +82,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                     Log.d("SettingScreen", "onChangeAutoStart: $value")
                     viewModel.changeAutoStart(value)
                 },
-                onChangeRingtoneType = { ringtoneInfo ->
-                    viewModel.changeRingtoneType(ringtoneInfo.index.toInt())
+                onChangeRingtoneUri = { ringtoneUri ->
+                    viewModel.changeRingtoneUri(ringtoneUri, context)
                 },
                 navigateBack = {
                     navController.popBackStack()
@@ -98,7 +98,7 @@ fun SettingsContent(
     runningTime: Int = 25 * 60,
     intervalTime: Int = 5 * 60,
     isAutoStart: Boolean = false,
-    ringtoneType: Int = -1,
+    ringtoneUri: String = "",
     ringtoneList: List<RingtoneInfo> = emptyList(),
     event: SettingsScreenEvent = SettingsScreenEvent(),
 ) {
@@ -176,7 +176,7 @@ fun SettingsContent(
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
                             Text(
-                                text = ringtoneList.find { it.index == ringtoneType }?.title ?: "Not Found",
+                                text = ringtoneList.find { it.uri == ringtoneUri }?.title ?: "Not Found",
                                 modifier = Modifier.padding(start = 10.dp)
                             )
                             Icon(Icons.Filled.ArrowDropDown, null,)
@@ -191,7 +191,7 @@ fun SettingsContent(
                                         Text(text = item.title)
                                     },
                                     onClick = {
-                                        event.onChangeRingtoneType(item)
+                                        event.onChangeRingtoneUri(item.uri)
                                         expanded.value = false
                                     }
                                 )
@@ -285,13 +285,13 @@ data class SettingsScreenEvent(
     val onIntervalTimeIncreaseMinutes: () -> Unit = {},
     val onIntervalTimeDecreaseMinutes: () -> Unit = {},
     val onChangeAutoStart: (Boolean) -> Unit = {},
-    val onChangeRingtoneType: (RingtoneInfo) -> Unit = {},
+    val onChangeRingtoneUri: (String) -> Unit = {},
     val navigateBack: () -> Unit = {},
 )
 
 val previewRingtoneList = listOf(
-    RingtoneInfo("title", 1),
-    RingtoneInfo("title2", 2)
+    RingtoneInfo("title", "audio1"),
+    RingtoneInfo("title2", "audio2")
 )
 
 @Preview
