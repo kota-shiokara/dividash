@@ -2,10 +2,10 @@ package jp.ikanoshiokara.dividash.data
 
 import android.content.Context
 import android.media.RingtoneManager
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -49,31 +49,31 @@ class SettingsRepositoryImpl(
 ) : SettingsRepository {
     override val runningTime =
         dataStore.data
-            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .catch { Logger.e(it) { "DataStore Failed" } }
             .map { preferences -> preferences[RUNNING_TIME] ?: (25 * 60) }
 
     override val intervalTime =
         dataStore.data
-            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .catch { Logger.e(it) { "DataStore Failed" } }
             .map { preferences -> preferences[INTERVAL_TIME] ?: (5 * 60) }
 
     override val isAutoStart =
         dataStore.data
-            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .catch { Logger.e(it) { "DataStore Failed" } }
             .map { preferences ->
                 preferences[IS_AUTO_START] ?: false
             }
 
     override val ringtoneUri =
         dataStore.data
-            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .catch { Logger.e(it) { "DataStore Failed" } }
             .map { preferences ->
                 preferences[RINGTONE_URI] ?: ""
             }
 
     override val userSettings =
         dataStore.data
-            .catch { Log.e("${it.cause}", "${it.stackTrace}") }
+            .catch { Logger.e(it) { "DataStore Failed" } }
             .map { preferences ->
                 UserSettings(
                     runningTime = preferences[RUNNING_TIME] ?: (25 * 60),

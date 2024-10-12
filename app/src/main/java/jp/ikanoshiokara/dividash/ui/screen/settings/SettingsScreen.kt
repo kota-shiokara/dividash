@@ -1,6 +1,5 @@
 package jp.ikanoshiokara.dividash.ui.screen.settings
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -49,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
 import jp.ikanoshiokara.dividash.LocalNavController
 import jp.ikanoshiokara.dividash.R
 import jp.ikanoshiokara.dividash.data.RingtoneInfo
@@ -78,7 +78,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 onIntervalTimeIncreaseMinutes = { viewModel.increaseIntervalTime() },
                 onIntervalTimeDecreaseMinutes = { viewModel.decreaseIntervalTime() },
                 onChangeAutoStart = { value ->
-                    Log.d("SettingScreen", "onChangeAutoStart: $value")
+                    Logger.i { "onChangeAutoStart: $value" }
                     viewModel.changeAutoStart(value)
                 },
                 onChangeRingtoneUri = { ringtoneUri ->
