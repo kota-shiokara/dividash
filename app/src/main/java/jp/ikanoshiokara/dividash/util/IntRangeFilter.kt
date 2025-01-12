@@ -13,6 +13,4 @@ fun Int.rangeFilter(
     return if (max < this) max else min
 }
 
-fun Int.rangeFilter(intRange: IntRange): Int {
-    return this.rangeFilter(intRange.first, intRange.last)
-}
+fun Int.rangeFilter(intRange: IntRange): Int = this.rangeFilter(intRange.first, intRange.last)
