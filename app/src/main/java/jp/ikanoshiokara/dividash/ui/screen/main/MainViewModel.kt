@@ -84,8 +84,8 @@ class MainViewModel(
         }
     }
 
-    fun mainScreenEvent(onNavigateSetting: () -> Unit): MainScreenEvent {
-        return MainScreenEvent(
+    fun mainScreenEvent(onNavigateSetting: () -> Unit): MainScreenEvent =
+        MainScreenEvent(
             onNavigateSetting = onNavigateSetting,
             onClickStartButton = {
                 _uiState.update { it.onStart() }
@@ -97,7 +97,6 @@ class MainViewModel(
                 _uiState.update { it.onStop() }
             },
         )
-    }
 }
 
 data class MainUiState(
@@ -124,13 +123,12 @@ data class MainUiState(
     val isComplete = currentTime == goalTime
     val isNotComplete = !isComplete
 
-    fun onStart(): MainUiState {
-        return if (prevDivisionType == DivisionType.Interval) {
+    fun onStart(): MainUiState =
+        if (prevDivisionType == DivisionType.Interval) {
             this.copy(isRun = true, currentDivisionType = DivisionType.Running)
         } else {
             this.copy(isInterval = true, currentDivisionType = DivisionType.Interval)
         }
-    }
 
     fun onAutoStart(): MainUiState {
         val nextDivisionType =
@@ -148,12 +146,10 @@ data class MainUiState(
         )
     }
 
-    fun onPause(): MainUiState {
-        return this.copy(isRun = false, isInterval = false)
-    }
+    fun onPause(): MainUiState = this.copy(isRun = false, isInterval = false)
 
-    fun onComplete(): MainUiState {
-        return this.copy(
+    fun onComplete(): MainUiState =
+        this.copy(
             isRun = false,
             isInterval = false,
             currentTime = 0,
@@ -165,16 +161,14 @@ data class MainUiState(
                     DivisionType.Interval
                 },
         )
-    }
 
-    fun onStop(): MainUiState {
-        return this.copy(
+    fun onStop(): MainUiState =
+        this.copy(
             isRun = false,
             isInterval = false,
             currentTime = 0,
             currentDivisionType = DivisionType.Running,
         )
-    }
 
     sealed interface DivisionType {
         data object Running : DivisionType

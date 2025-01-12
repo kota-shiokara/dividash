@@ -89,7 +89,7 @@ dependencies {
 }
 
 kotlinter {
-    ignoreFailures = false
+    ignoreLintFailures = false
     reporters = arrayOf("html", "plain")
 }
 

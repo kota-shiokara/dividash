@@ -104,13 +104,12 @@ data class SettingUiState(
     val ringtoneList: List<RingtoneInfo> = emptyList(),
 ) {
     companion object {
-        fun fromUserSettings(settings: UserSettings): SettingUiState {
-            return SettingUiState(
+        fun fromUserSettings(settings: UserSettings): SettingUiState =
+            SettingUiState(
                 runningTime = settings.runningTime,
                 intervalTime = settings.intervalTime,
                 isAutoStart = settings.isAutoStart,
                 ringtoneUri = settings.ringtoneUri,
             )
-        }
     }
 }
