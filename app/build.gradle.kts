@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "jp.ikanoshiokara.dividash"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "jp.ikanoshiokara.dividash"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 5
         versionName = "1.0.3"
 
