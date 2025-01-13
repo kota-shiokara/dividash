@@ -13,6 +13,12 @@
   ],
   "packageRules": [
     {
+      "groupName": "Compose Compiler",
+      "matchPackagePrefixes": [
+        "androidx.compose.compiler", "org.jetbrains.kotlin:"
+      ]
+    },
+    {
       "groupName": "Jetpack Compose",
       "matchPackageNames": [
         "/^androidx\\.compose:/",
