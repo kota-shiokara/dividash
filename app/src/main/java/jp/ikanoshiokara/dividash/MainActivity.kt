@@ -12,18 +12,14 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.kiwi.navigationcompose.typed.Destination
-import com.kiwi.navigationcompose.typed.composable
-import com.kiwi.navigationcompose.typed.createRoutePattern
 import jp.ikanoshiokara.dividash.ui.screen.main.MainScreen
 import jp.ikanoshiokara.dividash.ui.screen.settings.SettingsScreen
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalSerializationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = createRoutePattern<Destinations.Main>(),
+                            startDestination = Destinations.Main,
                         ) {
                             composable<Destinations.Main> {
                                 MainScreen()
@@ -60,7 +56,7 @@ val LocalNavController =
         error("No NavGraph provided")
     }
 
-sealed interface Destinations : Destination {
+sealed interface Destinations {
     @Serializable
     data object Main : Destinations
 
