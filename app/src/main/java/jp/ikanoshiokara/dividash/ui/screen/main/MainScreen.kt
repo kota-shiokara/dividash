@@ -36,15 +36,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kiwi.navigationcompose.typed.navigate
 import jp.ikanoshiokara.dividash.Destinations
 import jp.ikanoshiokara.dividash.LocalNavController
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import jp.ikanoshiokara.dividash.util.formatTimer
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalSerializationApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     val context = LocalContext.current

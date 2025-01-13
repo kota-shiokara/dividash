@@ -75,7 +75,6 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.navigation.compose.typed)
 
     implementation(libs.kotlinx.serialization.core)
 
