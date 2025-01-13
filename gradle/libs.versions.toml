@@ -11,7 +11,7 @@ composeBom = "2024.12.01"
 datastore = "1.1.1"
 koin = "4.0.1"
 navigation = "2.8.5"
-serialization = "1.6.3"
+serialization = "1.8.0"
 kotlinter = "5.0.1"
 kermit = "2.0.5"
 
