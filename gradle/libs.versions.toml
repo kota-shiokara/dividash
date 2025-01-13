@@ -11,7 +11,6 @@ composeBom = "2024.12.01"
 datastore = "1.1.1"
 koin = "3.5.6"
 navigation = "2.8.5"
-navigationComposeTyped = "0.10.0"
 serialization = "1.6.3"
 kotlinter = "5.0.1"
 kermit = "2.0.5"
@@ -30,7 +29,6 @@ kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 # navigation
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-navigation-compose-typed = { group = "com.kiwi.navigation-compose.typed", name = "core", version.ref = "navigationComposeTyped" }
 
 # compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
