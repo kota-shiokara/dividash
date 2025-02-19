@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewDynamicColors
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,10 +76,7 @@ fun MainContent(
     event: MainScreenEvent = MainScreenEvent(),
 ) {
     Scaffold(
-        modifier =
-            modifier
-                .fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.primary,
+        modifier = modifier.fillMaxSize(),
     ) { innerPadding ->
         Box(
             Modifier
@@ -92,11 +91,7 @@ fun MainContent(
                 horizontalArrangement = Arrangement.End,
             ) {
                 IconButton(
-                    onClick = event.onNavigateSetting,
-                    colors =
-                        IconButtonDefaults.iconButtonColors(
-                            contentColor = Color.White,
-                        ),
+                    onClick = event.onNavigateSetting
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = null)
                 }
@@ -114,14 +109,11 @@ fun MainContent(
                             Modifier
                                 .aspectRatio(1f)
                                 .padding(16.dp),
-                        color = Color.White,
                         strokeWidth = 32.dp,
-                        trackColor = Color.White.copy(alpha = 0.4f),
                         strokeCap = StrokeCap.Round,
                     )
                     Text(
                         text = (goalTime - currentTime).formatTimer(),
-                        color = Color.White,
                         fontSize = 56.sp,
                     )
                 }
@@ -136,11 +128,6 @@ fun MainContent(
                     OutlinedIconButton(
                         onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
                         modifier = Modifier.size(size),
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.primary,
-                                containerColor = Color.White,
-                            ),
                     ) {
                         Icon(
                             if (isPlay) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -150,12 +137,7 @@ fun MainContent(
                     }
                     OutlinedIconButton(
                         onClick = event.onClickStopButton,
-                        modifier = Modifier.size(size),
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.primary,
-                                containerColor = Color.White,
-                            ),
+                        modifier = Modifier.size(size)
                     ) {
                         Icon(
                             Icons.Default.Stop,
@@ -177,7 +159,7 @@ data class MainScreenEvent(
 )
 
 @PreviewScreenSizes
-@Preview
+@PreviewLightDark
 @Composable
 fun MainScreenDefaultPreview() {
     DividashTheme {

@@ -30,8 +30,7 @@ class MainActivity : ComponentActivity() {
                     LocalNavController provides navController,
                 ) {
                     Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background,
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         NavHost(
                             navController = navController,
