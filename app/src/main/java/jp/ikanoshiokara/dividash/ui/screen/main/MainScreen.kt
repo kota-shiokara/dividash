@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import jp.ikanoshiokara.dividash.Destinations
 import jp.ikanoshiokara.dividash.LocalNavController
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
+import jp.ikanoshiokara.dividash.util.PreviewPhonesLightDark
 import jp.ikanoshiokara.dividash.util.formatTimer
 import org.koin.androidx.compose.koinViewModel
 
@@ -158,8 +159,7 @@ data class MainScreenEvent(
     val onClickStopButton: () -> Unit = {},
 )
 
-@PreviewScreenSizes
-@PreviewLightDark
+@PreviewPhonesLightDark
 @Composable
 fun MainScreenDefaultPreview() {
     DividashTheme {
@@ -167,7 +167,8 @@ fun MainScreenDefaultPreview() {
     }
 }
 
-@Preview
+@PreviewDynamicColors
+@PreviewLightDark
 @Composable
 fun MainScreenIsPlayPreview() {
     DividashTheme {
