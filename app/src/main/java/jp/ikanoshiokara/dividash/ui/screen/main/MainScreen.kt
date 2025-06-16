@@ -10,16 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +24,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -99,18 +95,19 @@ fun MainContent(
                 Box(
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(
+                    DividashTimerCircle(
                         progress = { (1.0f * currentTime) / goalTime },
+                        onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
                         modifier =
                             Modifier
                                 .aspectRatio(1f)
-                                .padding(16.dp),
-                        strokeWidth = 32.dp,
-                        strokeCap = StrokeCap.Round,
+                                .padding(16.dp)
                     )
                     Text(
                         text = (goalTime - currentTime).formatTimer(),
-                        fontSize = 56.sp,
+                        fontSize = 80.sp,
+                        letterSpacing = 8.sp,
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -119,27 +116,19 @@ fun MainContent(
                     horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    val size = 80.dp
-
-                    OutlinedIconButton(
-                        onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
-                        modifier = Modifier.size(size),
+                    ElevatedButton(
+                        onClick = event.onClickStopButton
                     ) {
-                        Icon(
-                            if (isPlay) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = null,
-                            modifier = Modifier.size(size),
-                        )
-                    }
-                    OutlinedIconButton(
-                        onClick = event.onClickStopButton,
-                        modifier = Modifier.size(size)
-                    ) {
-                        Icon(
-                            Icons.Default.Stop,
-                            contentDescription = null,
-                            modifier = Modifier.size(size),
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            Icon(
+                                Icons.Default.Replay,
+                                contentDescription = null
+                            )
+                            Text("Reset")
+                        }
                     }
                 }
             }
