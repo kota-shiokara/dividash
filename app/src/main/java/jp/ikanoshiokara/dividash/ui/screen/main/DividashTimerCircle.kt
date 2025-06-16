@@ -38,11 +38,10 @@ fun DividashTimerCircle(
     Canvas(
         modifier
             .clickable(
-                onClick = onClick
-            )
-            .semantics(mergeDescendants = true) {
+                onClick = onClick,
+            ).semantics(mergeDescendants = true) {
                 progressBarRangeInfo = ProgressBarRangeInfo(coercedProgress(), 0f..1f)
-            }
+            },
     ) {
         val startAngle = 270f
         val sweep = coercedProgress() * 360f
@@ -54,7 +53,7 @@ fun DividashTimerCircle(
             startAngle = startAngle,
             sweepAngle = 360f,
             useCenter = true,
-            size = Size(arcDimen, arcDimen)
+            size = Size(arcDimen, arcDimen),
         )
 
         // indicator
@@ -63,7 +62,7 @@ fun DividashTimerCircle(
             startAngle = startAngle,
             sweepAngle = sweep,
             useCenter = true,
-            size = Size(arcDimen, arcDimen)
+            size = Size(arcDimen, arcDimen),
         )
     }
 }
@@ -76,26 +75,27 @@ fun DividashTimerCirclePreview() {
     val currentTime = 80f
 
     DividashTheme {
-        Scaffold (
-            Modifier.fillMaxSize()
+        Scaffold(
+            Modifier.fillMaxSize(),
         ) { innerPadding ->
             Box(
                 modifier = Modifier.padding(innerPadding),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 DividashTimerCircle(
                     progress = {
                         currentTime / baseTime
                     },
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .aspectRatio(1f)
+                            .padding(16.dp),
                 )
                 Text(
                     text = (baseTime - currentTime).toInt().formatTimer(),
                     fontSize = 80.sp,
                     letterSpacing = 8.sp,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }

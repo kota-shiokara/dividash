@@ -83,7 +83,7 @@ fun MainContent(
                 horizontalArrangement = Arrangement.End,
             ) {
                 IconButton(
-                    onClick = event.onNavigateSetting
+                    onClick = event.onNavigateSetting,
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = null)
                 }
@@ -101,13 +101,13 @@ fun MainContent(
                         modifier =
                             Modifier
                                 .aspectRatio(1f)
-                                .padding(16.dp)
+                                .padding(16.dp),
                     )
                     Text(
                         text = (goalTime - currentTime).formatTimer(),
                         fontSize = 80.sp,
                         letterSpacing = 8.sp,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -117,15 +117,15 @@ fun MainContent(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     ElevatedButton(
-                        onClick = event.onClickStopButton
+                        onClick = event.onClickStopButton,
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceAround
+                            horizontalArrangement = Arrangement.SpaceAround,
                         ) {
                             Icon(
                                 Icons.Default.Replay,
-                                contentDescription = null
+                                contentDescription = null,
                             )
                             Text("Reset")
                         }
