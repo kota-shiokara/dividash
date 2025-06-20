@@ -4,5 +4,5 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     alias(libs.plugins.jetbrainsKotlinSerialization) apply false
     alias(libs.plugins.jetbrainsKotlinCompose) apply false
-    alias(libs.plugins.kotlinter) apply false
+    alias(libs.plugins.ktlint) apply false
 }

@@ -1,12 +1,9 @@
-import org.jmailen.gradle.kotlinter.tasks.FormatTask
-import org.jmailen.gradle.kotlinter.tasks.LintTask
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKotlinSerialization)
     alias(libs.plugins.jetbrainsKotlinCompose)
-    alias(libs.plugins.kotlinter)
+    alias(libs.plugins.ktlint)
 }
 
 android {
@@ -31,7 +28,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -84,23 +81,4 @@ dependencies {
     implementation(libs.koin.compose.viewmodel)
 
     implementation(libs.kermit)
-}
-
-kotlinter {
-    ignoreLintFailures = false
-    reporters = arrayOf("html", "plain")
-}
-
-tasks.forEach { task ->
-    task.run {
-        when (this) {
-            is LintTask -> {
-                setSource(source - fileTree("${layout.buildDirectory}/generated"))
-            }
-
-            is FormatTask -> {
-                setSource(source - fileTree("${layout.buildDirectory}/generated"))
-            }
-        }
-    }
 }

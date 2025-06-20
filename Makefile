@@ -1,10 +1,5 @@
-lint: kotlin_lint android_lint
-
-kotlin_lint:
-	./gradlew lintKotlin
-
-android_lint:
-	./gradlew lint
+lint:
+	./gradlew ktlintCheck
 
 format:
-	./gradlew formatKotlin
+	./gradlew ktlintFormat
