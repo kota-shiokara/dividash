@@ -2,26 +2,21 @@ package jp.ikanoshiokara.dividash.ui.screen.main
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
@@ -41,14 +36,15 @@ fun DividashTimerCircle(
     val coercedProgress = { progress().coerceIn(0f, 1f) }
 
     Canvas(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clickable {
-                onClick()
-            }
-            .semantics(mergeDescendants = true) {
-                progressBarRangeInfo = ProgressBarRangeInfo(coercedProgress(), 0f..1f)
-            },
+        modifier =
+            modifier
+                .aspectRatio(1f)
+                .clickable {
+                    onClick()
+                }
+                .semantics(mergeDescendants = true) {
+                    progressBarRangeInfo = ProgressBarRangeInfo(coercedProgress(), 0f..1f)
+                },
     ) {
         val sweep = coercedProgress() * 360f
         val arcDimen = min(size.width, size.height)
