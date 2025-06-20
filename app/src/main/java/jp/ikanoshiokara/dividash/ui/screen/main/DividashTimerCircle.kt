@@ -25,7 +25,7 @@ import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import jp.ikanoshiokara.dividash.util.formatTimer
 import kotlin.math.min
 
-private const val startAngle = 270f
+private const val START_ANGLE = 270f
 
 @Composable
 fun DividashTimerCircle(
@@ -51,7 +51,7 @@ fun DividashTimerCircle(
         // base
         drawArc(
             color = baseColor,
-            startAngle = startAngle,
+            startAngle = START_ANGLE,
             sweepAngle = 360f,
             useCenter = true,
             size = Size(arcDimen, arcDimen),
@@ -60,7 +60,7 @@ fun DividashTimerCircle(
         // indicator
         drawArc(
             color = indicatorColor,
-            startAngle = startAngle,
+            startAngle = START_ANGLE,
             sweepAngle = sweep,
             useCenter = true,
             size = Size(arcDimen, arcDimen),
