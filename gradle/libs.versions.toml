@@ -13,7 +13,7 @@ koin = "4.0.2"
 navigation = "2.8.5"
 serialization = "1.8.0"
 ktlint = "12.3.0"
-kermit = "2.0.5"
+kermit = "2.0.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
