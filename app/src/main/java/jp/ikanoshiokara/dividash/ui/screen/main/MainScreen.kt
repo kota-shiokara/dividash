@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,16 +41,16 @@ import org.koin.androidx.compose.koinViewModel
 fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     val context = LocalContext.current
     val navController = LocalNavController.current
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.value.isPlay) {
+    LaunchedEffect(uiState.isPlay) {
         viewModel.onRunning(context)
     }
 
     MainContent(
-        goalTime = uiState.value.goalTime,
-        currentTime = uiState.value.currentTime,
-        isPlay = uiState.value.isPlay,
+        goalTime = uiState.goalTime,
+        currentTime = uiState.currentTime,
+        isPlay = uiState.isPlay,
         event =
             viewModel.mainScreenEvent(
                 onNavigateSetting = {

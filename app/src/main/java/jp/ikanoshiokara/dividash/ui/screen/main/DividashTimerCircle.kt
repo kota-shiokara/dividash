@@ -25,6 +25,8 @@ import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
 import jp.ikanoshiokara.dividash.util.formatTimer
 import kotlin.math.min
 
+private const val startAngle = 270f
+
 @Composable
 fun DividashTimerCircle(
     modifier: Modifier = Modifier,
@@ -43,7 +45,6 @@ fun DividashTimerCircle(
                 progressBarRangeInfo = ProgressBarRangeInfo(coercedProgress(), 0f..1f)
             },
     ) {
-        val startAngle = 270f
         val sweep = coercedProgress() * 360f
         val arcDimen = min(size.width, size.height)
 
