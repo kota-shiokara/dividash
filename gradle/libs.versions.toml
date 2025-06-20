@@ -12,7 +12,7 @@ datastore = "1.1.2"
 koin = "4.0.2"
 navigation = "2.8.5"
 serialization = "1.8.0"
-kotlinter = "5.0.1"
+ktlint = "12.1.2"
 kermit = "2.0.5"
 
 [libraries]
@@ -56,4 +56,4 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrainsKotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 jetbrainsKotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
