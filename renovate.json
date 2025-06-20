@@ -14,8 +14,9 @@
   "packageRules": [
     {
       "groupName": "Compose Compiler",
-      "matchPackagePrefixes": [
-        "androidx.compose.compiler", "org.jetbrains.kotlin:"
+      "matchPackageNames": [
+        "androidx.compose.compiler{/,}**",
+        "org.jetbrains.kotlin:{/,}**"
       ]
     },
     {
