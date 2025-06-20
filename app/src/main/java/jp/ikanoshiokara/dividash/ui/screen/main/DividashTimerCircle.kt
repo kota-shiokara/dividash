@@ -2,6 +2,7 @@ package jp.ikanoshiokara.dividash.ui.screen.main
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
@@ -33,15 +36,17 @@ fun DividashTimerCircle(
     progress: () -> Float,
     onClick: () -> Unit = {},
     indicatorColor: Color = MaterialTheme.colorScheme.primary,
-    baseColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    baseColor: Color = MaterialTheme.colorScheme.primaryContainer,
 ) {
     val coercedProgress = { progress().coerceIn(0f, 1f) }
 
     Canvas(
-        modifier
-            .clickable(
-                onClick = onClick,
-            ).semantics(mergeDescendants = true) {
+        modifier = modifier
+            .aspectRatio(1f)
+            .clickable {
+                onClick()
+            }
+            .semantics(mergeDescendants = true) {
                 progressBarRangeInfo = ProgressBarRangeInfo(coercedProgress(), 0f..1f)
             },
     ) {
@@ -76,29 +81,21 @@ fun DividashTimerCirclePreview() {
     val currentTime = 80f
 
     DividashTheme {
-        Scaffold(
-            Modifier.fillMaxSize(),
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier.padding(innerPadding),
-                contentAlignment = Alignment.Center,
-            ) {
-                DividashTimerCircle(
-                    progress = {
-                        currentTime / baseTime
-                    },
-                    modifier =
-                        Modifier
-                            .aspectRatio(1f)
-                            .padding(16.dp),
-                )
-                Text(
-                    text = (baseTime - currentTime).toInt().formatTimer(),
-                    fontSize = 80.sp,
-                    letterSpacing = 8.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            }
+        Box(
+            contentAlignment = Alignment.Center,
+        ) {
+            DividashTimerCircle(
+                progress = {
+                    currentTime / baseTime
+                },
+                modifier = Modifier.padding(8.dp),
+            )
+            Text(
+                text = (baseTime - currentTime).toInt().formatTimer(),
+                fontSize = 80.sp,
+                letterSpacing = 8.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
         }
     }
 }

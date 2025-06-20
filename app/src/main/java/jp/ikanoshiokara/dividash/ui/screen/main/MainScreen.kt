@@ -71,8 +71,8 @@ fun MainContent(
     Scaffold(
         modifier = modifier.fillMaxSize(),
     ) { innerPadding ->
-        Box(
-            Modifier
+        Column(
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
         ) {
@@ -80,7 +80,7 @@ fun MainContent(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.End,
             ) {
                 IconButton(
@@ -89,47 +89,40 @@ fun MainContent(
                     Icon(Icons.Default.Settings, contentDescription = null)
                 }
             }
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
+                DividashTimerCircle(
+                    progress = { (1.0f * currentTime) / goalTime },
+                    onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+                Text(
+                    text = (goalTime - currentTime).formatTimer(),
+                    fontSize = 80.sp,
+                    letterSpacing = 8.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                ElevatedButton(
+                    onClick = event.onClickStopButton,
                 ) {
-                    DividashTimerCircle(
-                        progress = { (1.0f * currentTime) / goalTime },
-                        onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
-                        modifier =
-                            Modifier
-                                .aspectRatio(1f)
-                                .padding(16.dp),
-                    )
-                    Text(
-                        text = (goalTime - currentTime).formatTimer(),
-                        fontSize = 80.sp,
-                        letterSpacing = 8.sp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    ElevatedButton(
-                        onClick = event.onClickStopButton,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround,
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceAround,
-                        ) {
-                            Icon(
-                                Icons.Default.Replay,
-                                contentDescription = null,
-                            )
-                            Text("Reset")
-                        }
+                        Icon(
+                            Icons.Default.Replay,
+                            contentDescription = null,
+                        )
+                        Text("Reset")
                     }
                 }
             }
