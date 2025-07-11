@@ -12,7 +12,7 @@ datastore = "1.1.7"
 koin = "4.1.0"
 navigation = "2.9.0"
 serialization = "1.9.0"
-ktlint = "12.3.0"
+ktlint = "13.0.0"
 kermit = "2.0.6"
 
 [libraries]
