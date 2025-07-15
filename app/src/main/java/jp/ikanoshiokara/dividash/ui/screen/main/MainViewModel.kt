@@ -68,11 +68,7 @@ class MainViewModel(
         }
 
         _uiState.update {
-            if (_uiState.value.isAutoStart) {
-                it.onAutoStart()
-            } else {
-                it.onComplete()
-            }
+            it.onComplete()
         }
     }
 
@@ -106,15 +102,13 @@ data class MainUiState(
     val intervalTime: Int = -1,
     val currentTime: Int = 0,
     val ringtoneUri: String = "",
-    val isRun: Boolean = false,
-    val isInterval: Boolean = false,
+    val isRun: Boolean = true,
+    val isPlay: Boolean = false,
     val isAutoStart: Boolean = false,
-    val prevDivisionType: DivisionType = DivisionType.Interval,
-    val currentDivisionType: DivisionType = DivisionType.Running,
 ) {
-    val isPlay = isRun || isInterval
+    val isInterval = !isRun
     val goalTime =
-        if (currentDivisionType == DivisionType.Running) {
+        if (isRun) {
             runningTime
         } else {
             intervalTime
@@ -123,56 +117,23 @@ data class MainUiState(
     val isComplete = currentTime == goalTime
     val isNotComplete = !isComplete
 
-    fun onStart(): MainUiState =
-        if (prevDivisionType == DivisionType.Interval) {
-            this.copy(isRun = true, currentDivisionType = DivisionType.Running)
-        } else {
-            this.copy(isInterval = true, currentDivisionType = DivisionType.Interval)
-        }
+    fun onStart(): MainUiState = this.copy(isPlay = true)
 
-    fun onAutoStart(): MainUiState {
-        val nextDivisionType =
-            if (currentDivisionType == DivisionType.Interval) {
-                DivisionType.Running
-            } else {
-                DivisionType.Interval
-            }
-        return this.copy(
-            isRun = nextDivisionType == DivisionType.Running,
-            isInterval = nextDivisionType == DivisionType.Interval,
-            currentTime = 0,
-            prevDivisionType = currentDivisionType,
-            currentDivisionType = nextDivisionType,
-        )
-    }
+    fun onPause(): MainUiState = this.copy(isRun = false, isPlay = false)
 
-    fun onPause(): MainUiState = this.copy(isRun = false, isInterval = false)
-
-    fun onComplete(): MainUiState =
+    fun onComplete(
+        enableAutoStart: Boolean = this.isAutoStart,
+    ): MainUiState =
         this.copy(
-            isRun = false,
-            isInterval = false,
+            isRun = !isRun,
+            isPlay = enableAutoStart,
             currentTime = 0,
-            prevDivisionType = currentDivisionType,
-            currentDivisionType =
-                if (currentDivisionType == DivisionType.Interval) {
-                    DivisionType.Running
-                } else {
-                    DivisionType.Interval
-                },
         )
 
     fun onStop(): MainUiState =
         this.copy(
-            isRun = false,
-            isInterval = false,
+            isRun = true,
+            isPlay = false,
             currentTime = 0,
-            currentDivisionType = DivisionType.Running,
         )
-
-    sealed interface DivisionType {
-        data object Running : DivisionType
-
-        data object Interval : DivisionType
-    }
 }
