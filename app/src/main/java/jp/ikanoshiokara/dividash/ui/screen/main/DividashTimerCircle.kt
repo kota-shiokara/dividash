@@ -39,9 +39,7 @@ fun DividashTimerCircle(
         modifier =
             modifier
                 .aspectRatio(1f)
-                .clickable {
-                    onClick()
-                }
+                .clickable(onClick = onClick)
                 .semantics(mergeDescendants = true) {
                     progressBarRangeInfo = ProgressBarRangeInfo(coercedProgress(), 0f..1f)
                 },
