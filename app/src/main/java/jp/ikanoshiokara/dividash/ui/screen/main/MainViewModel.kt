@@ -121,9 +121,7 @@ data class MainUiState(
 
     fun onPause(): MainUiState = this.copy(isRun = false, isPlay = false)
 
-    fun onComplete(
-        enableAutoStart: Boolean = this.isAutoStart,
-    ): MainUiState =
+    fun onComplete(enableAutoStart: Boolean = this.isAutoStart): MainUiState =
         this.copy(
             isRun = !isRun,
             isPlay = enableAutoStart,
