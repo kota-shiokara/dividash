@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Settings
@@ -27,21 +28,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ikanoshiokara.dividash.Destinations
 import jp.ikanoshiokara.dividash.LocalNavController
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
-import jp.ikanoshiokara.dividash.util.PreviewPhonesLightDark
 import jp.ikanoshiokara.dividash.util.formatTimer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
+fun MainScreen(
+    viewModel: MainViewModel = koinViewModel()
+) {
     val context = LocalContext.current
     val navController = LocalNavController.current
     val uiState by viewModel.uiState.collectAsState()
@@ -94,11 +98,11 @@ fun MainContent(
                 }
             }
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().clip(CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
                 val circleModifier: Modifier = Modifier.aspectRatio(1f).padding(16.dp)
-                val strokeWidth: Dp = 8.dp
+                val strokeWidth: Dp = 16.dp
 
                 CircularProgressIndicator(
                     progress = { 1.0f },
@@ -154,7 +158,7 @@ data class MainScreenEvent(
     val onClickStopButton: () -> Unit = {},
 )
 
-@PreviewPhonesLightDark
+@PreviewScreenSizes
 @Composable
 fun MainScreenDefaultPreview() {
     DividashTheme {
