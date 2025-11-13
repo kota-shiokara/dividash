@@ -1,17 +1,21 @@
 package jp.ikanoshiokara.dividash.ui.screen.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,20 +28,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ikanoshiokara.dividash.Destinations
 import jp.ikanoshiokara.dividash.LocalNavController
 import jp.ikanoshiokara.dividash.ui.theme.DividashTheme
-import jp.ikanoshiokara.dividash.util.PreviewPhonesLightDark
 import jp.ikanoshiokara.dividash.util.formatTimer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
+fun MainScreen(
+    viewModel: MainViewModel = koinViewModel()
+) {
     val context = LocalContext.current
     val navController = LocalNavController.current
     val uiState by viewModel.uiState.collectAsState()
@@ -90,19 +98,32 @@ fun MainContent(
                 }
             }
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().clip(CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
-                DividashTimerCircle(
-                    progress = { (1.0f * currentTime) / goalTime },
-                    onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                val circleModifier: Modifier = Modifier.aspectRatio(1f).padding(16.dp)
+                val strokeWidth: Dp = 16.dp
+
+                CircularProgressIndicator(
+                    progress = { 1.0f },
+                    modifier = circleModifier,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = strokeWidth,
+                )
+                CircularProgressIndicator(
+                    progress = { (goalTime - 1.0f * currentTime) / goalTime },
+                    modifier =
+                        circleModifier.clickable(
+                            onClick = if (isPlay) event.onClickPauseButton else event.onClickStartButton,
+                        ),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = strokeWidth,
                 )
                 Text(
                     text = (goalTime - currentTime).formatTimer(),
                     fontSize = 80.sp,
                     letterSpacing = 8.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -137,7 +158,7 @@ data class MainScreenEvent(
     val onClickStopButton: () -> Unit = {},
 )
 
-@PreviewPhonesLightDark
+@PreviewScreenSizes
 @Composable
 fun MainScreenDefaultPreview() {
     DividashTheme {
