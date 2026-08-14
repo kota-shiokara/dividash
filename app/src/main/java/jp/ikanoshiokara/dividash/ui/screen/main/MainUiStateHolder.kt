@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import jp.ikanoshiokara.dividash.ui.UiStateHolder
 
 interface MainUiStateHolder: UiStateHolder {
-    override val uiState: State<MainUiState>
+    override val uiState: MainUiState
 
     fun onStart()
     fun onPause()

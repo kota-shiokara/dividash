@@ -9,5 +9,5 @@ interface UiState {
 }
 
 interface UiStateHolder {
-    val uiState: State<UiState>
+    val uiState: UiState
 }
