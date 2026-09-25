@@ -43,9 +43,7 @@ import jp.ikanoshiokara.dividash.util.formatTimer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel = koinViewModel()
-) {
+fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     val context = LocalContext.current
     val navController = LocalNavController.current
     val uiState by viewModel.uiState.collectAsState()
