@@ -1,5 +1,5 @@
 [versions]
-agp = "8.11.1"
+agp = "8.13.2"
 kotlin = "2.2.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -9,10 +9,10 @@ lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2025.07.00"
 datastore = "1.1.7"
-koin = "4.1.0"
+koin = "4.2.2"
 navigation = "2.9.3"
 serialization = "1.9.0"
-ktlint = "13.0.0"
+ktlint = "13.1.0"
 kermit = "2.2.0"
 
 [libraries]
