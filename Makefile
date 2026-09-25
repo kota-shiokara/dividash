@@ -3,3 +3,6 @@ lint:
 
 format:
 	./gradlew ktlintFormat
+
+test:
+	./gradlew checkDebugAarMetadata testDebugUnitTest
