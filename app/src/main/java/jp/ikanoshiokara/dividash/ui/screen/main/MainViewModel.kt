@@ -22,23 +22,28 @@ internal class MainViewModel(
         private set
 
     override fun onStart() {
-        TODO("Not yet implemented")
+        updateReady { it.onStart() }
     }
 
     override fun onPause() {
-        TODO("Not yet implemented")
+        updateReady { it.onPause() }
     }
 
     override fun onComplete() {
-        TODO("Not yet implemented")
+        updateReady { it.onComplete() }
     }
 
     override fun onStop() {
-        TODO("Not yet implemented")
+        updateReady { it.onStop() }
     }
 
     init {
         load()
+    }
+
+    private inline fun updateReady(transform: (MainUiState.Ready) -> MainUiState.Ready) {
+        val state = uiState as? MainUiState.Ready ?: return
+        uiState = transform(state)
     }
 
     private fun load() {
@@ -85,20 +90,14 @@ internal class MainViewModel(
             player.stop()
         }
 
-        uiState =
-            state.copy(
-                isRun = !state.isRun,
-                isPlay = state.isAutoStart,
-                currentTime = 0,
-            )
+        onComplete()
     }
 
     suspend fun onRunning() {
-        val state = uiState as? MainUiState.Ready ?: return
-
-        while (state.isPlay) {
+        // 毎周期 uiState を読み直し、一時停止・停止・ラップ切り替えを反映する
+        while ((uiState as? MainUiState.Ready)?.isPlay == true) {
             delay(1000)
-            uiState = state.copy(currentTime = state.currentTime + 1)
+            updateReady { it.copy(currentTime = it.currentTime + 1) }
             checkCompleteRunning()
         }
     }
