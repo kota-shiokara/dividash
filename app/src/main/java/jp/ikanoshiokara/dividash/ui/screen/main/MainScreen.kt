@@ -24,12 +24,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -43,28 +40,47 @@ import jp.ikanoshiokara.dividash.util.formatTimer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel = koinViewModel()
-) {
-    val context = LocalContext.current
+internal fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
     val navController = LocalNavController.current
-    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.isPlay) {
-        viewModel.onRunning(context)
+    when (val uiState = viewModel.uiState) {
+        MainUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        MainUiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("Error")
+            }
+        }
+        is MainUiState.Ready -> {
+            LaunchedEffect(uiState.isPlay) {
+                viewModel.onRunning()
+            }
+
+            MainContent(
+                goalTime = uiState.goalTime,
+                currentTime = uiState.currentTime,
+                isPlay = uiState.isPlay,
+                event =
+                    MainScreenEvent(
+                        onNavigateSetting = {
+                            navController.navigate(Destinations.Settings)
+                        },
+                        onClickStartButton = viewModel::onStart,
+                        onClickPauseButton = viewModel::onPause,
+                        onClickStopButton = viewModel::onStop,
+                    ),
+            )
+        }
     }
-
-    MainContent(
-        goalTime = uiState.goalTime,
-        currentTime = uiState.currentTime,
-        isPlay = uiState.isPlay,
-        event =
-            viewModel.mainScreenEvent(
-                onNavigateSetting = {
-                    navController.navigate(Destinations.Settings)
-                },
-            ),
-    )
 }
 
 @Composable

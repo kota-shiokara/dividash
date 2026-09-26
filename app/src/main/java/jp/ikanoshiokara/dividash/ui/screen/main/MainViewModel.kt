@@ -15,8 +15,9 @@ import kotlinx.coroutines.launch
 
 internal class MainViewModel(
     private val settingsRepository: SettingsRepository,
-    private val context: Context
-) : ViewModel(), MainUiStateHolder {
+    private val context: Context,
+) : ViewModel(),
+    MainUiStateHolder {
     override var uiState: MainUiState by mutableStateOf(MainUiState.Loading)
         private set
 
@@ -84,11 +85,12 @@ internal class MainViewModel(
             player.stop()
         }
 
-        uiState = state.copy(
-            isRun = !state.isRun,
-            isPlay = state.isAutoStart,
-            currentTime = 0,
-        )
+        uiState =
+            state.copy(
+                isRun = !state.isRun,
+                isPlay = state.isAutoStart,
+                currentTime = 0,
+            )
     }
 
     suspend fun onRunning() {

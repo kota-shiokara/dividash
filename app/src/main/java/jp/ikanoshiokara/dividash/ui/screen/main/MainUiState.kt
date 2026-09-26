@@ -2,9 +2,11 @@ package jp.ikanoshiokara.dividash.ui.screen.main
 
 import jp.ikanoshiokara.dividash.ui.UiState
 
-internal sealed interface MainUiState: UiState {
-    data object Loading: MainUiState
-    data object Error: MainUiState
+internal sealed interface MainUiState : UiState {
+    data object Loading : MainUiState
+
+    data object Error : MainUiState
+
     data class Ready(
         val loading: Boolean = false,
         val error: Exception? = null,
@@ -15,7 +17,7 @@ internal sealed interface MainUiState: UiState {
         val isRun: Boolean = true,
         val isPlay: Boolean = false,
         val isAutoStart: Boolean = false,
-    ): MainUiState {
+    ) : MainUiState {
         val isInterval = !isRun
         val goalTime =
             if (isRun) {
