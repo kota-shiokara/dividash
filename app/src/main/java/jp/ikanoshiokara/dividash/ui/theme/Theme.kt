@@ -102,8 +102,13 @@ fun DividashTheme(
                 if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             }
 
-            darkTheme -> darkScheme
-            else -> lightScheme
+            darkTheme -> {
+                darkScheme
+            }
+
+            else -> {
+                lightScheme
+            }
         }
 
     MaterialTheme(
