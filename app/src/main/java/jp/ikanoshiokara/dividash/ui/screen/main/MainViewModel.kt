@@ -3,34 +3,50 @@ package jp.ikanoshiokara.dividash.ui.screen.main
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.RingtoneManager
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jp.ikanoshiokara.dividash.data.SettingsRepository
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainViewModel(
+internal class MainViewModel(
     private val settingsRepository: SettingsRepository,
-) : ViewModel() {
-    private val _uiState: MutableStateFlow<MainUiState> = MutableStateFlow(MainUiState())
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    private val context: Context
+) : ViewModel(), MainUiStateHolder {
+    override var uiState: MainUiState by mutableStateOf(MainUiState.Loading)
+        private set
 
-    init {
-        getSettings()
+    override fun onStart() {
+        TODO("Not yet implemented")
     }
 
-    private fun getSettings() {
+    override fun onPause() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onComplete() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStop() {
+        TODO("Not yet implemented")
+    }
+
+    init {
+        load()
+    }
+
+    private fun load() {
         viewModelScope.launch {
-            _uiState.update { it.copy(loading = true) }
+            uiState = MainUiState.Loading
             try {
                 settingsRepository.userSettings.collect {
-                    _uiState.value =
-                        MainUiState(
+                    uiState =
+                        MainUiState.Ready(
                             loading = false,
                             runningTime = it.runningTime,
                             intervalTime = it.intervalTime,
@@ -39,19 +55,20 @@ class MainViewModel(
                         )
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e) }
+                uiState = MainUiState.Error
             }
         }
     }
 
-    private fun checkCompleteRunning(context: Context) {
-        if (_uiState.value.isNotComplete) return
+    private fun checkCompleteRunning() {
+        val state = uiState as? MainUiState.Ready ?: return
+        if (state.isNotComplete) return
 
         // 音を鳴らします
         viewModelScope.launch {
             val ringtoneUri =
-                if (_uiState.value.ringtoneUri.isNotBlank()) {
-                    _uiState.value.ringtoneUri.toUri()
+                if (state.ringtoneUri.isNotBlank()) {
+                    state.ringtoneUri.toUri()
                 } else {
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
                 }
@@ -67,71 +84,20 @@ class MainViewModel(
             player.stop()
         }
 
-        _uiState.update {
-            it.onComplete()
-        }
+        uiState = state.copy(
+            isRun = !state.isRun,
+            isPlay = state.isAutoStart,
+            currentTime = 0,
+        )
     }
 
-    suspend fun onRunning(context: Context) {
-        while (_uiState.value.isPlay) {
+    suspend fun onRunning() {
+        val state = uiState as? MainUiState.Ready ?: return
+
+        while (state.isPlay) {
             delay(1000)
-            _uiState.update { it.copy(currentTime = it.currentTime + 1) }
-            checkCompleteRunning(context)
+            uiState = state.copy(currentTime = state.currentTime + 1)
+            checkCompleteRunning()
         }
     }
-
-    fun mainScreenEvent(onNavigateSetting: () -> Unit): MainScreenEvent =
-        MainScreenEvent(
-            onNavigateSetting = onNavigateSetting,
-            onClickStartButton = {
-                _uiState.update { it.onStart() }
-            },
-            onClickPauseButton = {
-                _uiState.update { it.onPause() }
-            },
-            onClickStopButton = {
-                _uiState.update { it.onStop() }
-            },
-        )
-}
-
-data class MainUiState(
-    val loading: Boolean = false,
-    val error: Exception? = null,
-    val runningTime: Int = -1,
-    val intervalTime: Int = -1,
-    val currentTime: Int = 0,
-    val ringtoneUri: String = "",
-    val isRun: Boolean = true,
-    val isPlay: Boolean = false,
-    val isAutoStart: Boolean = false,
-) {
-    val isInterval = !isRun
-    val goalTime =
-        if (isRun) {
-            runningTime
-        } else {
-            intervalTime
-        }
-
-    val isComplete = currentTime == goalTime
-    val isNotComplete = !isComplete
-
-    fun onStart(): MainUiState = this.copy(isPlay = true)
-
-    fun onPause(): MainUiState = this.copy(isRun = false, isPlay = false)
-
-    fun onComplete(enableAutoStart: Boolean = this.isAutoStart): MainUiState =
-        this.copy(
-            isRun = !isRun,
-            isPlay = enableAutoStart,
-            currentTime = 0,
-        )
-
-    fun onStop(): MainUiState =
-        this.copy(
-            isRun = true,
-            isPlay = false,
-            currentTime = 0,
-        )
 }
