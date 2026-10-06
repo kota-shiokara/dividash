@@ -12,7 +12,7 @@ class MainUiStateTest {
     }
 
     private val initialState =
-        MainUiState(
+        MainUiState.Ready(
             runningTime = RUNNING_TIME,
             intervalTime = INTERVAL_TIME,
         )
@@ -37,8 +37,25 @@ class MainUiStateTest {
     }
 
     @Test
+    fun `isComplete_goalTimeを超えていても完了`() {
+        assertTrue(initialState.copy(currentTime = RUNNING_TIME + 1).isComplete)
+    }
+
+    @Test
     fun `onStart_再生状態になる`() {
         assertTrue(initialState.onStart().isPlay)
+    }
+
+    @Test
+    fun `onPause_再生だけ止まり作業中のまま時間も保持される`() {
+        val state =
+            initialState
+                .copy(isPlay = true, currentTime = 100)
+                .onPause()
+
+        assertFalse(state.isPlay)
+        assertTrue(state.isRun)
+        assertEquals(100, state.currentTime)
     }
 
     @Test
