@@ -26,12 +26,12 @@ internal sealed interface MainUiState : UiState {
                 intervalTime
             }
 
-        val isComplete = currentTime == goalTime
+        val isComplete = currentTime >= goalTime
         val isNotComplete = !isComplete
 
         fun onStart(): Ready = this.copy(isPlay = true)
 
-        fun onPause(): Ready = this.copy(isRun = false, isPlay = false)
+        fun onPause(): Ready = this.copy(isPlay = false)
 
         fun onComplete(enableAutoStart: Boolean = this.isAutoStart): Ready =
             this.copy(

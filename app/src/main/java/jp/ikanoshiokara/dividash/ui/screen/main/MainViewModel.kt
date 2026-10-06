@@ -51,14 +51,17 @@ internal class MainViewModel(
             uiState = MainUiState.Loading
             try {
                 settingsRepository.userSettings.collect {
-                    uiState =
-                        MainUiState.Ready(
+                    // 計測中の状態 (currentTime / isRun / isPlay) は保持し、設定値だけ反映する
+                    val current = uiState as? MainUiState.Ready ?: MainUiState.Ready()
+                    val updated =
+                        current.copy(
                             loading = false,
                             runningTime = it.runningTime,
                             intervalTime = it.intervalTime,
                             isAutoStart = it.isAutoStart,
                             ringtoneUri = it.ringtoneUri,
                         )
+                    uiState = updated.copy(currentTime = updated.currentTime.coerceAtMost(updated.goalTime))
                 }
             } catch (e: Exception) {
                 uiState = MainUiState.Error
