@@ -52,6 +52,7 @@ internal fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
                 CircularProgressIndicator()
             }
         }
+
         MainUiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -60,6 +61,7 @@ internal fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
                 Text("Error")
             }
         }
+
         is MainUiState.Ready -> {
             LaunchedEffect(uiState.isPlay) {
                 viewModel.onRunning()
