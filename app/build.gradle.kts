@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKotlinSerialization)
     alias(libs.plugins.jetbrainsKotlinCompose)
     alias(libs.plugins.ktlint)
@@ -8,7 +7,7 @@ plugins {
 
 android {
     namespace = "jp.ikanoshiokara.dividash"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "jp.ikanoshiokara.dividash"
